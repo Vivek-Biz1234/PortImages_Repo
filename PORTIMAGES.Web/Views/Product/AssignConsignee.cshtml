@@ -1,0 +1,350 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+<div class="main-content-container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0" id="lblProductHeader_AssignConsignee">Assign Consignee</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span id="spnProduct_AssignConsignee">Assign Consignee</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="card">
+                <input type="hidden" id="hdnProductEncId" />
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Shipper</label>
+                                <select class="form-select form-control" id="ddlClient_AsssignConsgnee" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Model</label>
+                                <select class="form-select form-control" id="ddlModel_AsssignConsgnee" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Chassis No.</label>
+                                <input type="text" class="form-control" id="txtChassisNo_AsssignConsgnee" placeholder="Chassis No.">
+                            </div>
+                        </div>
+                        <div class="col-lg-12 d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-sm btn-danger fw-normal text-white" id="btnClear_AsssignConsgnee">Clear</button>
+                            <button type="button" class="btn btn-sm btn-primary fw-normal text-white" id="btnSearch_AsssignConsgnee">Filter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-card mt-4">
+                <div class="table-responsive position-relative">
+                    <table id="ProductConsigneeTable" class="table align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="fw-medium">#</th>
+                                <th scope="col" class="fw-medium">Chassis No</th>
+                                <th scope="col" class="fw-medium">Model</th>
+                                <th scope="col" class="fw-medium">Shipper</th>
+                                <th scope="col" class="fw-medium">Consignee Name</th>
+                                <th scope="col" class="fw-medium">Consignee Email</th>
+                                <th scope="col" class="fw-medium">Consignee Mobile</th>
+                                <th scope="col" class="fw-medium">Consignee Address</th>
+                                <th scope="col" class="fw-medium">Assign By</th>
+                                <th scope="col" class="fw-medium">Assign At</th>
+                                <th scope="col" class="fw-medium">Source</th>
+                                <th scope="col" class="fw-medium"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblpagedescription">Showing 1 to 10 of 50 entries</span>
+                    <nav class="custom-pagination" aria-label="Page navigation">
+                        <ul class="pagination mb-0 justify-content-center" id="pagination">
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="frmAssigneConsignee" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mb-0" id="modalLabelPort">Assign Consignee <span id="lblCno">#</span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body p-3">
+                <input type="hidden" id="hdnProdEncId" />
+                <div class="row">
+
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Consignee Name<span class="text-danger"> *</span></label>
+                            <input type="text" class="form-control" id="txtConsigneeName" placeholder="Consignee Name">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Email<span class="text-danger"> *</span></label>
+                            <input type="text" class="form-control" id="txtConsigneeEmail" placeholder="Consignee's email id">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Contact Number<span class="text-danger"> *</span></label>
+                            <input type="text" class="form-control only-number" id="txtConsigneeContact" data-maxlength="10" placeholder="Contact Number">
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="mb-3">
+                            <label class="label">Consignee Address<span class="text-danger"> *</span></label>
+                            <textarea class="form-control" id="txtConsigneeAddress" rows="2" placeholder="Consignee Address"></textarea>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+            <div class="modal-footer p-3">
+                <button type="button" class="btn btn-xs btn-danger fw-normal text-white" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-xs btn-primary fw-normal text-white" id="btnAssignConsignee">Assign</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script src="~/js/common/helper.js"></script>
+    <script>
+
+        let productConsigneData = [];
+        let filteredProductConsigneData = [];
+        let pageSize = 50;
+        let currentPage = 1;
+
+        $(document).ready(function () {
+            bindDropdowns();
+            $("#divControls").hide();
+        });
+
+        /* ==============================
+        DROPDOWNS (AJAX)
+        ================================*/
+        function bindDropdowns() {
+            bindDropdown("USER", "#ddlClient_AsssignConsgnee", null, null, 0);
+            bindDropdown("MODEL", "#ddlModel_AsssignConsgnee", null, null, 0);
+            bindDropdown("CONSIGNEE", "#ddlConsgnee_AsssignConsgnee", null, null, 0, "Select Consignee");
+        }
+        $(document).on("click", "#btnSearch_AsssignConsgnee", function () {
+            loadProductConsigneeList();
+        });
+
+        function loadProductConsigneeList() {
+            let ChassisNo = $("#txtChassisNo_AsssignConsgnee").val();
+            let ClientId = $("#ddlClient_AsssignConsgnee").val();
+            let ModelId = $("#ddlModel_AsssignConsgnee").val();
+
+            let payload = {
+                chassisNo: ChassisNo,
+                clientId: ClientId,
+                modelId: ModelId
+            };
+
+            $.ajax({
+                url: "/Product/GetProductConsigneeList",
+                type: "GET",
+                data: payload,
+                success: function (res) {
+                    if (res.status === 1) {
+                        productConsigneData = res.data || [];
+                        filteredProductConsigneData = productConsigneData;
+                        currentPage = 1;
+                        renderTable();
+                        renderPageInfo();
+                    }
+                }
+            });
+        }
+
+        /* ==============================
+           TABLE RENDER
+        ================================*/
+        function renderTable() {
+            let start = (currentPage - 1) * pageSize;
+            let end = start + pageSize;
+            let pageData = filteredProductConsigneData.slice(start, end); 
+            let tbody = ""; 
+            $.each(pageData, function (i, row) {
+                tbody += `
+                                        <tr>
+                                                <td>${start + i + 1}</td>
+                                                <td>${row.chassisNo}</td>
+                                                <td>${row.modelName}</td>
+                                                <td>${row.shipper}</td>
+                                                <td>${row.consigneeName}</td>
+                                                <td>${row.consigneeEmail}</td>
+                                                <td>${row.consigneeMobile}</td>
+                                                <td>${row.consigneeAddress}</td>
+                                                <td>${row.assignBy}</td>
+                                                <td>${row.assignAt}</td>
+                                                <td>${row.sourceName}</td>
+                                                <td>
+                                                    <button class="btn btn-xs btn-outline-success d-flex align-items-center gap-1 justify-content-center btnAssign_AssignConsignee" data-encID=${row.encID} data-cno=${row.chassisNo}>
+                                                    <i class="ti ti-circle-check"></i> Assign Consignee
+                                                    </button>
+                                                </td>
+                                        </tr>`;
+            });
+
+            $("#ProductConsigneeTable tbody").html(tbody);
+            renderPagination(); 
+        }
+
+        /* ==============================
+           PAGINATION
+        ================================*/
+        function renderPagination() {
+            let totalPages = Math.ceil(filteredProductConsigneData.length / pageSize);
+            let html = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+                                        <li class="page-item">
+                                            <button class="page-link ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>
+                                        </li>`;
+            }
+
+            $("#pagination").html(html);
+        }
+
+        $(document).on("click", ".page-link", function () {
+            currentPage = parseInt($(this).data("page"));
+            renderTable();
+            renderPageInfo();
+        });
+
+        function renderPageInfo() {
+            let total = filteredProductConsigneData.length;
+            let start = (currentPage - 1) * pageSize + 1;
+            let end = currentPage * pageSize;
+            if (end > total) end = total;
+
+            if (total === 0) {
+                $("#lblpagedescription").html(`
+                                            <span class="text-danger">
+                                                <i class="ti ti-info-circle"></i>
+                                                No data found
+                                            </span>`);
+                return;
+            }
+
+            $("#lblpagedescription").text(`Showing ${start} to ${end} of ${total} entries`);
+        };
+
+        function ValidateConsignee() { 
+            if (!validateRequired("txtConsigneeName", [""], "Consignee Name is required")) return false;
+            if (!validateEmail("txtConsigneeEmail", "Email is required!", "Enter a valid email address")) return false;
+            if (!validateContactNumber("txtConsigneeContact", "Contact number is required !", "Enter a valid contact number !")) return false;
+            if (!validateRequired("txtConsigneeAddress", [""], "Consignee Address is required")) return false;  
+            return true;
+        }
+        $(document).on("click", ".btnAssign_AssignConsignee", function () {
+            let encID = $(this).data("encid");
+            let cno = $(this).data("cno");
+            $("#lblCno").text("[" + cno + "]");  
+            $.get("/Product/GetProductConsigneeById", { encId: encID }, function (res) {
+                if (res.status === 1) {
+                    let d = res.data[0];
+                   
+                    $("#hdnProdEncId").val(encID);
+                    $("#txtConsigneeName").val(d.consigneeName);
+                    $("#txtConsigneeEmail").val(d.consigneeEmail);
+                    $("#txtConsigneeContact").val(d.consigneeMobile);
+                    $("#txtConsigneeAddress").val(d.consigneeAddress);
+                    new bootstrap.Modal("#frmAssigneConsignee").show();
+                }
+            });             
+
+        });
+
+        $(document).on("click", "#btnAssignConsignee", function () {
+            if (!ValidateConsignee()) return; 
+            let payload = {
+                encId: $("#hdnProdEncId").val().trim(),
+                consigneeName: $("#txtConsigneeName").val().trim(),
+                consigneeEmail: $("#txtConsigneeEmail").val().trim(),
+                consigneeMobile: $("#txtConsigneeContact").val().trim(),
+                consigneeAddress: $("#txtConsigneeAddress").val().trim(), 
+                createdBy: 0
+            };
+
+            let url ="/Product/AssignConsignee";
+            $.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (res) { 
+                    let type =
+                        res.status === 1 ? "success" :
+                            res.status === 2 ? "warning" :
+                                res.status === -1 ? "info" : "error";
+
+                    let title =
+                        res.status === 1 ? "Success" :
+                            res.status === 2 ? "Already Exists" :
+                                res.status === -1 ? "Not Found" : "Error";
+
+                    if (res.status === 1) {
+                        resetAssignConsigneeForm();
+                        loadProductConsigneeList()();
+                    }
+
+                    ShowToast(type, title, res.message);
+                }
+            });
+
+        });
+
+        $(document).on("input change", "#frmAssigneConsignee input,#frmAssigneConsignee textarea", function () {
+            $(this).removeClass("input-error");
+            $(this).next(".error-text").remove();
+        });
+
+        $("#frmAssigneConsignee").on("hidden.bs.modal", function () {
+            resetAssignConsigneeForm();
+        });
+
+        function resetAssignConsigneeForm() {
+            $("#lblCno").text("");
+            $("#hdnProdEncId").val(0);
+            $("#frmAssigneConsignee input").val("");
+            $("#frmAssigneConsignee textarea").val(""); 
+            $(".error-text").remove();
+            $(".input-error").removeClass("input-error"); 
+            bootstrap.Modal.getInstance("#frmAssigneConsignee")?.hide();
+        }
+
+
+    </script>
+}

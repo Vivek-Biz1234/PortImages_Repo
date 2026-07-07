@@ -1,0 +1,54 @@
+﻿@model List<PORTIMAGES.Application.Auth.AuthEmployee.DTOs.MainMenuDTO>
+
+
+@* <ul class="menu-inner">
+    <li class="menu-title small text-uppercase">
+        <span class="menu-title-text">MAIN</span>
+    </li>
+    <li class="menu-item">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="ti ti-layout-dashboard menu-icon"></i>
+            <span class="title">Terminal Master</span>
+        </a>
+        <ul class="menu-sub">
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link">Inbox</a>
+            </li>
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link">Compose</a>
+            </li>
+            <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link">Read</a>
+            </li>
+        </ul>
+    </li>
+</ul> *@
+
+<ul class="menu-inner">
+    <li class="menu-title small text-uppercase">
+        <span class="menu-title-text">MAIN</span>
+    </li>
+    @foreach (var main in Model)
+    {
+        <li class="menu-item">
+            <a href="javascript:void(0);" class="menu-link menu-toggle ">
+                <i class="@main.Icon menu-icon"></i>
+                <span class="title">@main.MainMenuName</span>
+            </a>
+
+            @if (main.SubMenus != null && main.SubMenus.Any())
+            {
+                <ul class="menu-sub">
+                    @foreach (var sub in main.SubMenus)
+                    {
+                        <li class="menu-item">
+                            <a href="/@sub.ControllerName/@sub.ActionName" class="menu-link">
+                                @sub.SubMenuName
+                            </a>
+                        </li>
+                    }
+                </ul>
+            }
+        </li>
+    }
+</ul> 

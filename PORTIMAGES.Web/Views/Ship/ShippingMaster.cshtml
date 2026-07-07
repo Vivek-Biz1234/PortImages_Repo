@@ -1,0 +1,438 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">Shipping Master</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span>Shipping Master</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="table-card">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3">
+                    <form class="table-src-form position-relative m-0">
+                        <input type="text" id="txtSearchShipping" class="form-control" placeholder="Search here...">
+                        <div class="src-btn">
+                            <span class="ti ti-search">search</span>
+                        </div>
+                    </form>
+                    <button type="button" class="btn btn-md btn-primary" data-bs-toggle="modal" data-bs-target="#frmShippingmaster"><i class="ti ti-plus"></i> Add Ship</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="ShippingTable" class="table align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="fw-medium">Sno</th>
+                                <th scope="col" class="fw-medium">Country</th>
+                                <th scope="col" class="fw-medium">ShippingName</th>
+                                <th scope="col" class="fw-medium">Email</th>
+                                <th scope="col" class="fw-medium">Contact No</th>
+                                <th scope="col" class="fw-medium">Fax No</th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Shipping Rate">Rate</abbr></th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Person In Charge">PI_Charge</abbr></th>
+                                <th scope="col" class="fw-medium">CC Mail</th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Head Office Address">HO</abbr></th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Branch Office Address">BO</abbr></th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Date of Entry">DOE</abbr></th>
+                                <th scope="col" class="fw-medium">Created by</th>
+                                <th scope="col" class="fw-medium">Status</th>
+                                <th scope="col" class="fw-medium">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblpagedescription">Showing 1 to 10 of 50 entries</span>
+                    <nav class="custom-pagination" aria-label="Page navigation">
+                        <ul class="pagination mb-0 justify-content-center" id="Shippingpagination">
+                        </ul>
+                    </nav>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add New Task -->
+<div class="modal fade" id="frmShippingmaster" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mb-0" id="modalLabelShipping">Add Shipping</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body p-3">
+                <input type="hidden" id="hdnShippingId" value="0" />
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Country Name</label>
+                            <select class="form-select form-control" id="ddlCountry" aria-label="Floating label select example">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Shipping Name</label>
+                            <input type="text" class="form-control" id="txtShippingName" placeholder="Enter Shipping Name">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Email</label>
+                            <input type="text" class="form-control" id="txtShippingEmail" placeholder="Email id">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Contact Number</label>
+                            <input type="text" class="form-control only-number" id="txtShippingContact" data-maxlength="10" placeholder="Contact Number">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Fax No</label>
+                            <input type="text" class="form-control" id="txtShippingFax" placeholder="Fax">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Shipping Rate</label>
+                            <input type="text" class="form-control only-number" data-maxlength="10" id="txtShippingRate" placeholder="">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Person In Charge</label>
+                            <input type="text" class="form-control" id="txtPersonInCharge" placeholder="Person In Charge">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">CC Mail</label>
+                            <input type="text" class="form-control" id="txtCCMail" placeholder="CC Mail">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Status</label>
+                            <select class="form-select form-control" id="ddlShippingStatus" aria-label="Floating label select example">
+                                <option value="-1" selected>Select Staus</option>
+                                <option value="1">Active</option>
+                                <option value="0">In-Active</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label class="label">Head Office Address</label>
+                            <textarea class="form-control" id="txtHOAddress" rows="1" placeholder="Head Office Address"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label class="label">Branch Office Address</label>
+                            <textarea class="form-control" id="txtBOAddress" rows="1" placeholder="Branch Office Address"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer p-3">
+                <button type="button" class="btn btn-md btn-danger fw-normal text-white" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-md btn-primary fw-normal text-white" id="btnShippingAdd">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script>
+
+        let shippingData = [];
+        let pageSize = 50;         // records per page
+        let currentPage = 1;
+        let filteredShippingData = [];
+        $(document).ready(function () {
+            bindDropdown("COUNTRY", "#ddlCountry");
+            LoadShippingList();
+        });
+
+        function LoadShippingList() {
+            $.ajax({
+                url: "/Ship/GetShippingList",
+                type: "GET",
+                success: function (res) {
+                    if (res.status === 1) {
+                        shippingData = res.data || [];
+                        filteredShippingData = shippingData;
+                        currentPage = 1;
+                        RenderTable();
+                        renderPageInfo();
+                    }
+                }
+            });
+        }
+        function RenderTable() {
+            let tbody = "";
+            let start = (currentPage - 1) * pageSize;
+            let end = start + pageSize;
+            let pageData = filteredShippingData.slice(start, end);
+            $.each(pageData, function (i, row) {
+                                            tbody += `
+                                                <tr>
+                                                <td>${start + i + 1}</td>
+                                                <td>${row.country}</td>
+                                                <td>${row.shippingName}</td>
+                                                <td>${row.email}</td>
+                                                <td>${row.contact}</td>
+                                                <td>${row.fax}</td>
+                                                <td>${row.rate}</td>
+                                                <td>${row.personInCharge}</td>
+                                                <td>${row.ccMail}</td>
+                                                <td>${row.hoAddress}</td>
+                                                <td>${row.boAddress}</td>
+                                                <td>${row.createdOn}</td>
+                                                <td>${row.createdBy}</td>
+                                                <td>
+                                                    ${row.isActive
+                                                    ? '<span class="text-success bg-success bg-opacity-10 default-badge">Active</span>'
+                                                    : '<span class="text-danger bg-danger bg-opacity-10 default-badge">Inactive</span>'
+                                                    }
+                                                </td >
+                                                <td>
+                                                    <div class="d-flex justify-content-start gap-3">
+                                                    <button class="bg-transparent p-0 border-0 hover-text-success btnEdit" data-id="${row.id}" data-title="Edit">
+                                                    <i class="ti ti-pencil fs-16"></i>
+                                                    </button>
+                                                    <button class="bg-transparent p-0 border-0 hover-text-danger btnDelete" data-id="${row.id}" data-title="Delete">
+                                                    <i class="ti ti-trash fs-16">delete</i>
+                                                    </button>
+                                                    </div>
+                                                </td>
+                                            </tr >
+                                `;
+
+            });
+            $("#ShippingTable tbody").html(tbody);
+            RenderPagination();
+        }
+        function RenderPagination() {
+            let totalPages = Math.ceil(filteredShippingData.length / pageSize);
+            let pageHtml = "";
+            for (let i = 1; i <= totalPages; i++) {
+                pageHtml += `
+                            <li class="page-item">
+                                <button class="page-link ${i === currentPage ? 'active' : ''} page-btn" data-page="${i}">
+                                    ${i}
+                                </button>
+                            </li>
+                        `;
+            }
+            $("#Shippingpagination").html(pageHtml);
+        }
+        $(document).on("click", ".page-btn", function () {
+            currentPage = parseInt($(this).data("page"));
+            RenderTable();
+            renderPageInfo();
+        });
+        function renderPageInfo() {
+            let page = parseInt(currentPage);
+            let size = parseInt(pageSize);
+            let total = filteredShippingData.length;
+            let start = (page - 1) * size + 1;
+            let end = page * size;
+            if (end > total) { end = total };
+            if (total === 0) {
+                $("#lblpagedescription").html(`
+                                            <span class="text-danger">
+                                                <i class="ti ti-info-circle"></i>
+                                                No data found
+                                            </span>
+                                        `);
+                return;
+            }
+            let desc = `Showing ${start} to ${end} of ${total} entries`;
+            $("#lblpagedescription").text(desc);
+        }
+
+
+        /* ==============================
+           VALIDATION
+        ================================*/
+        function validateShipping() {
+            if (!validateRequired("ddlCountry", ["", "-1"], "Country is required")) return false;
+            if (!validateRequired("txtShippingName", ["", " "], "Shipping Name is required")) return false;
+            if (!validateEmail("txtShippingEmail", "Email is required!", "Enter a valid email address")) return false;
+            if (!validateContactNumber("txtShippingContact", "Contact number is required !", "Enter a valid contact number !")) return false;
+            // OPTIONAL FIELD VALIDATION
+            if (!validateOptional("txtShippingFax", isValidFax, "Enter a valid Fax number")) return false;
+            if (!validateOptional("txtCCMail", isValidEmail, "Enter a valid CC Mail")) return false;
+
+            if (!validateRequired("ddlShippingStatus", ["", "-1"], "Status is required")) return false;
+            return true;
+        }
+
+        /* ==============================
+        ADD / UPDATE
+        ================================*/
+        $(document).on("click", "#btnShippingAdd", function () {
+            if (!validateShipping()) return;
+            debugger;
+            let Status = $("#ddlShippingStatus").val();
+            let _ID = parseInt($("#hdnShippingId").val()) || 0;
+            let payload = {
+                ID: _ID,
+                CountryId: parseInt($("#ddlCountry").val()),
+                ShippingName: $("#txtShippingName").val().trim(),
+                Email: $("#txtShippingEmail").val().trim(),
+                Contact: $("#txtShippingContact").val().trim(),
+                Fax: $("#txtShippingFax").val().trim(),
+                Rate: $("#txtShippingRate").val().trim(),
+                PersonInCharge: $("#txtPersonInCharge").val().trim(),
+                CCMail: $("#txtCCMail").val().trim(),
+                HOAddress: $("#txtHOAddress").val().trim(),
+                BOAddress: $("#txtBOAddress").val().trim(),
+                IsActive: Status === "1",
+                CreatedBy: 0,
+                UpdatedBy: 0
+            };
+
+
+            let url = payload.ID === 0 ? "/Ship/AddShipping" : "/Ship/UpdateShipping";
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (res) {
+                    let type =
+                        res.status === 1 ? "success" :
+                            (res.status === 2 || res.status === 3) ? "warning" :
+                                res.status === -1 ? "info" : "error";
+
+                    let title =
+                        res.status === 1 ? "Success" :
+                            (res.status === 2 || res.status === 3) ? "Already Exists" :
+                                res.status === -1 ? "Not Found" : "Error";
+                    if (res.status === 1) {
+                        resetShippingForm();
+                        LoadShippingList();
+                    }
+                    ShowToast(type, title, res.message);
+                }
+            });
+        });
+
+        /* ==============================
+        EDIT
+        ================================*/
+        $(document).on("click", ".btnEdit", function () {
+            let id = $(this).data("id");
+            $.get("/Ship/GetShippingById", { id }, function (res) {
+                if (res.status === 1) {
+                    let d = res.data;
+                    $("#hdnShippingId").val(d.id);
+                    $("#ddlCountry").val(d.countryId).trigger("chosen:updated");
+                    $("#txtShippingName").val(d.shippingName);
+                    $("#txtShippingEmail").val(d.email);
+                    $("#txtShippingContact").val(d.contact);
+                    $("#txtShippingFax").val(d.fax);
+                    $("#txtShippingRate").val(d.rate);
+                    $("#txtPersonInCharge").val(d.personInCharge);
+                    $("#txtCCMail").val(d.ccMail);
+                    $("#txtHOAddress").val(d.hoAddress);
+                    $("#txtBOAddress").val(d.boAddress);
+                    $("#ddlShippingStatus").val(res.data.isActive ? "1" : "0");
+                    $("#modalLabelShipping").text("Edit Shipping");
+                    $("#btnShippingAdd").text("Update");
+
+                    new bootstrap.Modal("#frmShippingmaster").show();
+                }
+            });
+        });
+
+        /* ==============================
+        DELETE
+        ================================*/
+        $(document).on("click", ".btnDelete", function () {
+            let id = $(this).data("id");
+            ShowConfirmToast("Delete this Shipping?", () => {
+                $.post("/Ship/DeleteShipping",
+                    { Id: id },
+                    function (res) {
+                        let type = res.status === 1 ? "success" : res.status === -1 ? "warning" : "error";
+                        let title = res.status === 1 ? "Deleted!" : res.status === -1 ? "Not Found!" : "Failed!";
+
+                        ShowToast(type, title, res.message);
+
+                        if (res.status === 1) {
+                            LoadShippingList();
+                        }
+                    },
+                    "json"
+                );
+            });
+        });
+
+        /* ==============================
+        RESET FORM
+        ================================*/
+
+        $(document).on("input change", "#frmShippingmaster input, #frmShippingmaster select", function () {
+            $(this).removeClass("input-error");
+            $(this).next(".error-text").remove();
+        });
+        $(document).on("click", '[data-bs-target="#frmShippingmaster"]', function () {
+            resetShippingForm();
+        });
+        function resetShippingForm() {
+
+            $("#hdnShippingId").val(0);
+            $("#frmShippingmaster input").val("");
+            $("#frmShippingmaster textarea").val("");
+            $("#frmShippingmaster select").val("-1").trigger("chosen:updated");
+            $(".error-text").remove();
+            $(".input-error").removeClass("input-error");
+
+            $("#modalLabelShipping").text("Add Shipping");
+            $("#btnShippingAdd").text("Submit");
+
+            bootstrap.Modal.getInstance("#frmShippingmaster")?.hide();
+        }
+
+        $(document).on("keyup", "#txtSearchShipping", function () {
+            let value = $(this).val().toLowerCase().trim();
+            filteredShippingData = shippingData.filter(row =>
+                Object.values(row).some(v =>
+                    String(v).toLowerCase().includes(value)
+                )
+            );
+            currentPage = 1;
+            RenderTable();
+            renderPageInfo();
+        });
+
+    </script>
+}
+

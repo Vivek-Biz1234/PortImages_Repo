@@ -1,0 +1,428 @@
+﻿@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">Model Master</h5>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">
+                    Model Master
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="table-card">
+
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3">
+                    <form class="table-src-form position-relative m-0">
+                        <input type="text" id="txtSearchModel" class="form-control" placeholder="Search here...">
+                        <div class="src-btn">
+                            <span class="ti ti-search">search</span>
+                        </div>
+                    </form>
+
+                    <button type="button" class="btn btn-md btn-primary"
+                            data-bs-toggle="modal" data-bs-target="#frmModelMaster">
+                        <i class="ti ti-plus"></i> Add Model
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table id="ModelTable" class="table align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="fw-medium">Sno</th>
+                                <th scope="col" class="fw-medium">Category</th>
+                                <th scope="col" class="fw-medium">Maker</th>
+                                <th scope="col" class="fw-medium">Model Name</th>
+                                <th scope="col" class="fw-medium">Title</th>
+                                <th scope="col" class="fw-medium">Status</th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Date of Entry">DOE</abbr></th>
+                                <th scope="col" class="fw-medium">Created By</th>
+                                <th scope="col" class="fw-medium">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblModelPageDescription"></span>
+                    <nav class="custom-pagination">
+                        <ul class="pagination mb-0" id="ModelPagination"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================
+     MODAL
+====================== -->
+<div class="modal fade" id="frmModelMaster" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabelModel">Add Model</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="hdnModelId" value="0" />
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Category</label>
+                            <select id="ddlModelCategory" class="form-select form-control"></select>
+                            @* <select name="" id="ddlModelCategory" class="form-control">
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                            <option value="4">Four</option>
+                            </select> *@
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Maker</label>
+                            <select id="ddlModelMaker" class="form-select form-control"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Model Name</label>
+                            <input type="text" id="txtModelName" class="form-control" placeholder="Enter Model Name" />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Status</label>
+                            <select id="ddlModelStatus" class="form-select form-control">
+                                <option value="-1">Select Status</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Title</label>
+                            <input type="text" id="txtModelTitle" class="form-control" placeholder="Title" />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Keyword</label>
+                            <input type="text" id="txtModelKeyword" class="form-control" placeholder="Keyword" />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="mb-3">
+                            <label class="label">Description</label>
+                            <textarea id="txtModelDescription" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="btnModelSave">Submit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+
+    <script>
+        let makerData = [];
+        let filteredModelData = [];
+        let pageSize = 50;
+        let currentPage = 1;
+
+        /* ==============================
+           DOCUMENT READY
+        ================================*/
+        $(document).ready(function () {
+            bindDropdown("CATEGORY", "#ddlModelCategory");
+            bindDropdown("MAKER", "#ddlModelMaker");
+            LoadModelList();
+        });
+
+        /* ==============================
+           LOAD LIST
+        ================================*/
+        function LoadModelList() {
+            $.ajax({
+                url: "/Ship/GetModelList",
+                type: "GET",
+                success: function (res) {
+                    if (res.status === 1) {
+                        makerData = res.data || [];
+                        filteredModelData = makerData;
+                        currentPage = 1;
+                        renderModelTable();
+                        renderModelPageInfo();
+                    }
+                }
+            });
+        }
+
+        /* ==============================
+           RENDER TABLE
+        ================================*/
+        function renderModelTable() {
+            let tbody = "";
+            let start = (currentPage - 1) * pageSize;
+            let end = start + pageSize;
+            let pageData = filteredModelData.slice(start, end);
+
+            $.each(pageData, function (i, row) {
+                tbody += `
+                                                                            <tr>
+                                                                                <td>${start + i + 1}</td>
+                                                                                <td>${row.category}</td>
+                                                                                <td>${row.maker}</td>
+                                                                                <td>${row.modelName}</td>
+                                                                                <td>${row.title ?? ''}</td>
+                                                                                <td>
+                                                                                ${row.isActive
+                        ? '<span class="text-success bg-success bg-opacity-10 default-badge">Active</span>'
+                        : '<span class="text-danger bg-danger bg-opacity-10 default-badge">Inactive</span>'}
+                                                                                </td>
+                                                                                <td>${row.createdOn}</td>
+                                                                                <td>${row.createdBy}</td>
+                                                                                <td>
+                                                                                    <div class="d-flex gap-3">
+                                                                                                <button class="btnEditModel bg-transparent border-0"
+                                                                                                data-id="${row.id}">
+                                                                                            <i class="ti ti-pencil fs-16"></i>
+                                                                                        </button>
+                                                                                                <button class="btnDeleteModel bg-transparent border-0"
+                                                                                                data-id="${row.id}">
+                                                                                            <i class="ti ti-trash fs-16"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>`;
+            });
+
+            $("#ModelTable tbody").html(tbody);
+            renderModelPagination();
+        }
+
+        /* ==============================
+           PAGINATION
+        ================================*/
+        function renderModelPagination() {
+            let totalPages = Math.ceil(filteredModelData.length / pageSize);
+            let html = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+                                                                            <li class="page-item">
+                                                                                <button class="page-link ${i === currentPage ? 'active' : ''}"
+                                                                                        data-page="${i}">
+                                                                                    ${i}
+                                                                                </button>
+                                                                            </li>`;
+            }
+
+            $("#ModelPagination").html(html);
+        }
+
+        $(document).on("click", "#ModelPagination .page-link", function () {
+            currentPage = parseInt($(this).data("page"));
+            renderModelTable();
+            renderModelPageInfo();
+        });
+
+        function renderModelPageInfo() {
+            let total = filteredModelData.length;
+            if (total === 0) {
+                $("#lblModelPageDescription").html(
+                    `<span class="text-danger"><i class="ti ti-info-circle"></i> No data found</span>`
+                );
+                return;
+            }
+
+            let start = (currentPage - 1) * pageSize + 1;
+            let end = Math.min(currentPage * pageSize, total);
+            $("#lblModelPageDescription").text(`Showing ${start} to ${end} of ${total} entries`);
+        }
+
+        /* ==============================
+           SEARCH
+        ================================*/
+        $(document).on("keyup", "#txtSearchModel", function () {
+            let value = $(this).val().toLowerCase().trim();
+            filteredModelData = makerData.filter(row =>
+                Object.values(row).some(v =>
+                    String(v).toLowerCase().includes(value)
+                )
+            );
+            currentPage = 1;
+            renderModelTable();
+            renderModelPageInfo();
+        });
+
+        /* ==============================
+           VALIDATION
+        ================================*/
+        function validateModel() {
+            if (!validateRequired("ddlModelCategory", ["", "-1"], "Category is required")) return false;
+            if (!validateRequired("ddlModelMaker", ["", "-1"], "Maker is required")) return false;
+            if (!validateRequired("txtModelName", ["", " "], "Model Name is required")) return false;
+            if (!validateRequired("ddlModelStatus", ["", "-1"], "Status is required")) return false;
+            let makerId = $("#hdnModelId").val();
+            return true;
+        }
+
+        /* ==============================
+           ADD / UPDATE
+        ================================*/
+        $(document).on("click", "#btnModelSave", function () {
+            if (!validateModel()) return;
+            debugger;
+
+            let Status = $("#ddlModelStatus").val();
+            let _ID = parseInt($("#hdnModelId").val()) || 0;
+            let payload = {
+                ID: _ID,
+                CategoryId: parseInt($("#ddlModelCategory").val()),
+                MakerId: parseInt($("#ddlModelMaker").val()),
+                ModelName: $("#txtModelName").val().trim(),
+                Title: $("#txtModelTitle").val().trim(),
+                Keyword: $("#txtModelKeyword").val().trim(),
+                Description: $("#txtModelDescription").val().trim(),
+                IsActive: Status === "1",
+                CreatedBy: 0,
+                UpdatedBy: 0
+            };
+
+            let url = _ID == "0"
+                ? "/Ship/AddModel"
+                : "/Ship/UpdateModel";
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (res) {
+                    let type =
+                        res.status === 1 ? "success" :
+                            res.status === 2 ? "warning" :
+                                res.status === -1 ? "info" : "error";
+
+                    let title =
+                        res.status === 1 ? "Success" :
+                            res.status === 2 ? "Already Exists" :
+                                res.status === -1 ? "Not Found" : "Error";
+
+                    if (res.status === 1) {
+                        resetModelForm();
+                        LoadModelList();
+                    }
+
+                    ShowToast(type, title, res.message);
+                }
+            });
+        });
+
+        /* ==============================
+           EDIT
+        ================================*/
+        $(document).on("click", ".btnEditModel", function () {
+            let id = $(this).data("id");
+            $.get("/Ship/GetModelById", { id }, function (res) {
+                if (res.status === 1) {
+                    let d = res.data;
+                    $("#hdnModelId").val(d.id);
+                    $("#ddlModelCategory").val(d.categoryId).trigger("chosen:updated");
+                    $("#ddlModelMaker").val(d.makerId).trigger("chosen:updated");
+                    $("#txtModelName").val(d.modelName);
+                    $("#txtModelTitle").val(d.title);
+                    $("#txtModelKeyword").val(d.keyword);
+                    $("#txtModelDescription").val(d.description);
+                    $("#ddlModelStatus").val(d.isActive ? "1" : "0");
+
+
+                    $("#modalLabelModel").text("Edit Model");
+                    $("#btnModelSave").text("Update");
+
+                    new bootstrap.Modal("#frmModelMaster").show();
+                }
+            });
+        });
+
+        /* ==============================
+           DELETE
+        ================================*/
+        $(document).on("click", ".btnDeleteModel", function () {
+            let id = $(this).data("id");
+
+            ShowConfirmToast("Delete this model?", () => {
+                $.post("/Ship/DeleteModel", { Id: id }, function (res) {
+                    let type = res.status === 1 ? "success" : "error";
+                    let title = res.status === 1 ? "Deleted!" : "Failed!";
+                    ShowToast(type, title, res.message);
+
+                    if (res.status === 1) LoadModelList();
+                }, "json");
+            });
+        });
+
+        /* ==============================
+           RESET FORM
+        ================================*/
+        function resetModelForm() {
+            $("#hdnModelId").val(0);
+            $("#frmModelMaster input, #frmModelMaster textarea").val("");
+            $("#frmModelMaster select").val("-1").trigger("chosen:updated");;
+            $(".error-text").remove();
+            $(".input-error").removeClass("input-error");
+            $("#modalLabelModel").text("Add Model");
+            $("#btnModelSave").text("Submit");
+
+            bootstrap.Modal.getInstance("#frmModelMaster")?.hide();
+        }
+
+        $(document).on("input change", "#frmModelMaster input, #frmModelMaster select, #frmModelMaster textarea", function () {
+            $(this).removeClass("input-error");
+            $(this).next(".error-text").remove();
+        });
+        $(document).on("click", '[data-bs-target="#frmModelMaster"]', function () {
+            resetModelForm();
+        });
+        $("#frmModelMaster").on("hidden.bs.modal", function () {
+            resetModelForm();
+        });
+
+
+    </script>
+
+}

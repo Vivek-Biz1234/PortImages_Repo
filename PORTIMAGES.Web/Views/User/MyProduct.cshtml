@@ -1,0 +1,202 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/User/_UserLayout.cshtml";
+}
+
+
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2 mt-1">
+        <h5 class="mb-0">Information</h5>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="table-card mb-3 p-3">
+                <div class="row">
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Terminal</label>
+                            <select class="form-select form-control" id="ddlterminal" aria-label="Floating label select example">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Yard In-Out Date</label>
+                            <div class="input-group">
+                                @* <input type="text" class="form-control" id="YardInDate" placeholder="Yard In Date">
+                                <input type="text" class="form-control" id="YardOutDate" placeholder="Yard Out Date"> *@
+                                <input type="date" class="form-control" id="txtYardInDate" placeholder="Yard In Date">
+                                <input type="date" class="form-control" id="txtYardOutDate" placeholder="Yard Out Date">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Chassis No.</label>
+                            <input type="text" class="form-control" id="txtChassisNo" placeholder="ChassisNo">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">INS Organization</label>
+                            <select class="form-select form-control" id="ddlorganization" aria-label="Floating label select example">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">INS Destinations</label>
+                            <select class="form-select form-control" id="ddldestinations" aria-label="Floating label select example">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Inventory Status</label>
+                            <select class="form-select form-control" id="ddlInventoryStatus" aria-label="Floating label select example">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Modal </label>
+                            <select class="form-select form-control" id="ddlmodel" aria-label="Floating label select example">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Vehicle Status</label>
+                            <select class="form-select form-control" id="ddlvehiclestatus" aria-label="Floating label select example">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">INS Date</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control" id="txtInsDateFrom">
+                                <input type="date" class="form-control" id="txtInsDateTo">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">INS Status</label>
+                            <select class="form-select form-control" id="ddlINSStatus" aria-label="Floating label select example">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Ship</label>
+                            <select class="form-select form-control" id="ddlShip" aria-label="Floating label select example">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Voyage No</label>
+                            <input type="text" class="form-control" id="txtvoyageNo" placeholder="Voyage No">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Radiation Dose</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="txtRadiationF" placeholder="">
+                                <input type="text" class="form-control" id="txtRadiationT" placeholder="">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Container No</label>
+                            <input type="text" class="form-control only-number" id="txtcontainerNo" data-maxlength="5" placeholder="Container No">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-4 col-sm-6 col-12">
+                        <button type="button" id="btnSearch_MyProduct" class="btn btn-sm btn-primary mt-4">
+                            <i class="ti ti-search"></i> Search
+                        </button>
+                        <button type="button" id="btnClear_MyProduct" class="btn btn-sm btn-default mt-4"><i class="ti ti-clear-all"></i> Clear All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="table-card">
+                <div class="d-flex align-items-center justify-content-end p-3">
+                    <button type="button" id="btnDownloadCurrentPage" class="btn btn-sm btn-success"><i class="ti ti-download"></i> Download Images (Current Page)</button>
+                </div>
+                <div class="default-table-area mx-minus-1 table-contact-list">
+                    <div class="table-responsive">
+                        <table class="table align-middle" id="myTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="fw-medium">Sno</th>
+                                    <th scope="col" class="fw-medium">ChassisNo</th>
+                                    <th scope="col" class="fw-medium">Ship Name</th>
+                                    <th scope="col" class="fw-medium">Terminal Name</th>
+                                    <th scope="col" class="fw-medium">Photo</th>
+                                    <th scope="col" class="fw-medium">Model Name</th>
+                                    <th scope="col" class="fw-medium">Maker Name</th>
+                                    <th scope="col" class="fw-medium">InventoryStatus</th>
+                                    <th scope="col" class="fw-medium">VehicleStatus</th>
+                                    <th scope="col" class="fw-medium">InsOrganization</th>
+                                    <th scope="col" class="fw-medium">InsDestination</th>
+                                    <th scope="col" class="fw-medium">InsStatus</th>
+                                    <th scope="col" class="fw-medium"><abbr data-title="InsDate">IDate</abbr></th>
+                                    <th scope="col" class="fw-medium">NFCNO</th>
+                                    <th scope="col" class="fw-medium">REFNO</th>
+                                    <th scope="col" class="fw-medium">YardInNo</th>
+                                    <th scope="col" class="fw-medium">YardInPlace</th>
+                                    <th scope="col" class="fw-medium">YardInDate</th>
+                                    <th scope="col" class="fw-medium">YardOutDate</th>
+                                    <th scope="col" class="fw-medium"><abbr data-title="Scheduled Shipping Date">SSDate</abbr></th>
+                                    <th scope="col" class="fw-medium"><abbr data-title="Shipping Date">SDate</abbr></th>
+                                    <th scope="col" class="fw-medium"><abbr data-title="VoyageNo">VNO</abbr></th>
+                                    <th scope="col" class="fw-medium"><abbr data-title="Storage Period In Days">SPD</abbr></th>
+                                    <th scope="col" class="fw-medium">ContainerNo</th>
+                                    <th scope="col" class="fw-medium">Mileage</th>
+                                    <th scope="col" class="fw-medium"><abbr data-title="Inner Cargo">IC</abbr></th>
+                                    <th scope="col" class="fw-medium"><abbr data-title="Reason Failure">RF</abbr></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                        <span class="fs-15" id="lblpagedescription_myproduct">
+                            <span class="text-danger">
+                                <i class="ti ti-info-circle"></i>
+                                No data found
+                            </span>
+                        </span>
+
+                        <nav class="custom-pagination" aria-label="Page navigation">
+                            <ul class="pagination mb-0 justify-content-center" id="pagination">
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script src="~/js/validation.js"></script>
+    <script src="~/js/user/my-products.js"></script>
+}

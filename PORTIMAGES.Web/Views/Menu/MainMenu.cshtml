@@ -1,0 +1,389 @@
+﻿@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">Main Menu Master</h5>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">Main Menu Master</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="table-card">
+
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3">
+                    <form class="table-src-form position-relative m-0">
+                        <input type="text" id="txtSearchMenu" class="form-control" placeholder="Search here...">
+                        <div class="src-btn">
+                            <span class="ti ti-search">search</span>
+                        </div>
+                    </form>
+
+                    <button type="button" class="btn btn-sm btn-primary"
+                            data-bs-toggle="modal" data-bs-target="#frmMainMenu">
+                        <i class="ti ti-plus"></i> Add Menu
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table id="MainMenuTable" class="table align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th>Sno</th>
+                                <th>Menu Name</th>
+                                <th>Icon</th>
+                                <th>Status</th>
+                                <th>Created By</th>
+                                <th>Created On</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblMenuPageDescription"></span>
+                    <nav class="custom-pagination">
+                        <ul class="pagination mb-0" id="MainMenuPagination"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================
+     MODAL
+====================== -->
+<div class="modal fade" tabindex="-1" id="frmMainMenu" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-slideout" role="document">
+        <div class="modal-content bg-white">
+            <div class="modal-header">
+                <h5 class="modal-title mb-0" id="modalLabelMenu">Add Main Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+
+            <div class="modal-body p-3">
+                <input type="hidden" id="hdnMenuId" value="0" />
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-3">
+                            <label class="label">Menu Name<span class="text-danger"> *</span></label>
+                            <input type="text" id="txtMenuName" class="form-control" placeholder="Enter Menu Name" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="label">Icon<span class="text-danger"> *</span></label>
+                            <input type="text" id="txtMenuIcon" class="form-control" placeholder="Icon (optional)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="label">Status<span class="text-danger"> *</span></label>
+                            <select id="ddlMenuStatus" class="form-select form-control">
+                                <option value="-1">Select Status</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-xs btn-danger" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-xs btn-primary" id="btnMenuSave">Submit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let menuData = [];
+        let filteredMenuData = [];
+        let pageSize = 50;
+        let currentPage = 1;
+
+        $(document).ready(function () {
+            LoadMenuList();
+        });
+
+        /* ==============================
+           LOAD LIST
+        ================================*/
+        function LoadMenuList() {
+            $.get("/Menu/GetMainMenuList", function (res) {
+                if (res.status === 1) {
+                    menuData = res.data || [];
+                    filteredMenuData = menuData;
+                    currentPage = 1;
+                    renderMenuTable();
+                    renderMenuPageInfo();
+                }
+            });
+        }
+
+        /* ==============================
+           RENDER TABLE
+        ================================*/
+        function renderMenuTable() {
+            let tbody = "";
+            let start = (currentPage - 1) * pageSize;
+            let end = start + pageSize;
+            let pageData = filteredMenuData.slice(start, end);
+            // // <td><i class="${row.icon} fs-16"></i> ${row.icon ?? '-'}</td>
+            $.each(pageData, function (i, row) {
+                tbody += `
+                                        <tr>
+                                            <td>${start + i + 1}</td>
+                                            <td>${row.mainMenuName}</td>
+                                            <td><i class="${row.icon} fs-16"></i></td>
+                                            <td>
+                                                ${row.isActive
+                        ? '<span class="text-success bg-success bg-opacity-10 default-badge">Active</span>'
+                        : '<span class="text-danger bg-danger bg-opacity-10 default-badge">Inactive</span>'
+                    }
+                                            </td>
+                                            <td>${row.createdBy}</td>
+                                            <td>${row.createdOn}</td>
+                                            <td>
+                                                <div class="d-flex gap-3">
+                                                    <button class="btnEditMenu bg-transparent border-0" data-id="${row.mainMenuId}">
+                                                        <i class="ti ti-pencil fs-16"></i>
+                                                    </button>
+                                                    <button class="btnDeleteMenu bg-transparent border-0" data-id="${row.mainMenuId}">
+                                                        <i class="ti ti-trash fs-16"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>`;
+            });
+
+            $("#MainMenuTable tbody").html(tbody);
+            renderMenuPagination();
+        }
+
+        /* ==============================
+           PAGINATION
+        ================================*/
+        function renderMenuPagination() {
+            let totalPages = Math.ceil(filteredMenuData.length / pageSize);
+            let html = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+                                        <li class="page-item">
+                                            <button class="page-link ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>
+                                        </li>`;
+            }
+            $("#MainMenuPagination").html(html);
+        }
+
+        $(document).on("click", "#MainMenuPagination .page-link", function () {
+            currentPage = parseInt($(this).data("page"));
+            renderMenuTable();
+            renderMenuPageInfo();
+        });
+
+        function renderMenuPageInfo() {
+            let total = filteredMenuData.length;
+            if (total === 0) {
+                $("#lblMenuPageDescription").html(
+                    `<span class="text-danger"><i class="ti ti-info-circle"></i> No data found</span>`
+                );
+                return;
+            }
+
+            let start = (currentPage - 1) * pageSize + 1;
+            let end = Math.min(currentPage * pageSize, total);
+            $("#lblMenuPageDescription").text(`Showing ${start} to ${end} of ${total} entries`);
+        }
+
+        /* ==============================
+           SEARCH
+        ================================*/
+        $(document).on("keyup", "#txtSearchMenu", function () {
+            let value = $(this).val().toLowerCase().trim();
+            filteredMenuData = menuData.filter(row =>
+                Object.values(row).some(v =>
+                    String(v).toLowerCase().includes(value)
+                )
+            );
+            currentPage = 1;
+            renderMenuTable();
+            renderMenuPageInfo();
+        });
+
+        /* ==============================
+           VALIDATION
+        ================================*/
+        function validateMenu() {
+            if (!validateRequired("txtMenuName", ["", " "], "Menu Name is required")) return false;
+            if (!validateRequired("ddlMenuStatus", ["", "-1"], "Status is required")) return false;
+            return true;
+        }
+
+        /* ==============================
+           ADD / UPDATE
+        ================================*/
+        $(document).on("click", "#btnMenuSave", function () {
+            if (!validateMenu()) return;
+
+            let _ID = parseInt($("#hdnMenuId").val()) || 0;
+            let formData = {
+                MainMenuId: _ID,
+                MainMenuName: $("#txtMenuName").val().trim(),
+                Icon: $("#txtMenuIcon").val().trim(),
+                IsActive: $("#ddlMenuStatus").val() === "1"
+            };
+
+            let url = _ID === 0 ? "/Menu/AddMainMenu" : "/Menu/UpdateMainMenu";
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: formData,
+                success: function (res) {
+                    let type = res.status === 1 ? "success" : res.status === 2 ? "warning" : res.status === -1 ? "info" : "error";
+                    let title = res.status === 1 ? "Success" : res.status === 2 ? "Already Exists" : res.status === -1 ? "Not Found" : "Error";
+
+                    if (res.status === 1) {
+                        resetMenuForm();
+                        LoadMenuList();
+                    }
+
+                    ShowToast(type, title, res.message);
+                }
+            });
+        });
+
+        /* ==============================
+        ADD / UPDATE MAIN MENU
+        ===============================*/
+        $(document).on("click", "#btnMenuSave", function () {
+            if (!validateMenu()) return;
+
+            let _ID = parseInt($("#hdnMenuId").val()) || 0;
+
+            // Prepare JSON payload
+            let payload = {
+                MainMenuId: _ID,
+                MainMenuName: $("#txtMenuName").val().trim(),
+                Icon: $("#txtMenuIcon").val().trim(),
+                IsActive: $("#ddlMenuStatus").val() === "1",
+                CreatedBy: 0,   // will be set in controller
+                UpdatedBy: 0    // will be set in controller
+            };
+
+            // Decide URL based on Add / Update
+            let url = _ID === 0 ? "/Menu/AddMainMenu" : "/Menu/UpdateMainMenu";
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (res) {
+                    // Determine toast type & title
+                    let type = res.status === 1 ? "success" :
+                        res.status === 2 ? "warning" :
+                            res.status === -1 ? "info" : "error";
+
+                    let title = res.status === 1 ? "Success" :
+                        res.status === 2 ? "Already Exists" :
+                            res.status === -1 ? "Not Found" : "Error";
+
+                    // Reset form & reload list if successful
+                    if (res.status === 1) {
+                        resetMenuForm();
+                        LoadMenuList();
+                    }
+
+                    ShowToast(type, title, res.message);
+                },
+                error: function () {
+                    ShowToast("error", "Error", "Something went wrong while saving the menu.");
+                }
+            });
+        });
+
+
+        /* ==============================
+           EDIT
+        ================================*/
+        $(document).on("click", ".btnEditMenu", function () {
+            let id = $(this).data("id");
+            $.get("/Menu/GetMainMenuById", { mainMenuId: id }, function (res) {
+                if (res.status === 1) {
+                    let d = res.data;
+                    $("#hdnMenuId").val(d.mainMenuId);
+                    $("#txtMenuName").val(d.mainMenuName);
+                    $("#txtMenuIcon").val(d.icon ?? '');
+                    $("#ddlMenuStatus").val(d.isActive ? "1" : "0");
+
+                    $("#modalLabelMenu").text("Edit Main Menu");
+                    $("#btnMenuSave").text("Update");
+
+                    new bootstrap.Modal("#frmMainMenu").show();
+                }
+            });
+        });
+
+        /* ==============================
+           DELETE
+        ================================*/
+        $(document).on("click", ".btnDeleteMenu", function () {
+            let id = $(this).data("id");
+            ShowConfirmToast("Delete this menu?", () => {
+                $.post("/Menu/DeleteMainMenu", { mainMenuId: id }, function (res) {
+                    let type = res.status === 1 ? "success" : "error";
+                    let title = res.status === 1 ? "Deleted!" : "Failed!";
+                    ShowToast(type, title, res.message);
+                    if (res.status === 1) LoadMenuList();
+                });
+            });
+        });
+
+        /* ==============================
+           RESET FORM
+        ================================*/
+        function resetMenuForm() {
+            $("#hdnMenuId").val(0);
+            $("#txtMenuName").val("");
+            $("#txtMenuIcon").val("");
+            $("#ddlMenuStatus").val("-1");
+            $("#modalLabelMenu").text("Add Main Menu");
+            $("#btnMenuSave").text("Submit");
+            bootstrap.Modal.getInstance("#frmMainMenu")?.hide();
+
+            $(".input-error").removeClass("input-error");
+            $(".error-text").remove();
+        }
+
+        $(document).on("input change", "#frmMainMenu input, #frmMainMenu select", function () {
+            $(this).removeClass("input-error");
+            $(this).next(".error-text").remove();
+        });
+        $(document).on("click", '[data-bs-target="#frmMainMenu"]', function () {
+            resetMenuForm();
+        });
+
+    </script>
+}

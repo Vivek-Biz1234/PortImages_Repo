@@ -1,0 +1,171 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+
+
+<div class="main-content-container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0" id="lblProductHeader_APBD">Add Product By Docs</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span id="spnProduct_APBD">Add Product By Docs</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="card">
+                <input type="hidden" id="hdnProductEncId" />
+                <div class="card-header">
+                    <a href="/Product/ViewProducts" class="btn btn-sm btn-primary float-end"><i class="ti ti-eye"></i>View Products</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Shipper<span class="text-danger"> *</span></label>
+                                <select class="form-select form-control" id="ddlClient_APBD" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Chassis No.<span class="text-danger"> *</span></label>
+                                <input type="text" class="form-control" id="txtChassisNo_APBD" placeholder="Chassis No.">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Model<span class="text-danger"> *</span></label>
+                                <select class="form-select form-control" id="ddlModel_APBD" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Invoice Price<span class="text-danger"> *</span></label>
+                                <input type="text" class="form-control only-number" id="txtInvPrice_APBD" placeholder="Invoice Price" maxlength="10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex gap-2 justify-content-end">
+                    <button type="button" class="btn btn-xs btn-danger fw-normal text-white" id="btnClearProduct_APBD">Clear</button>
+                    <button type="button" class="btn btn-xs btn-primary fw-normal text-white" id="btnAddProduct_APBD">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script src="~/js/common/helper.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            bindDropdowns();
+        });
+
+        /* ==============================
+        DROPDOWNS (AJAX)
+        ================================*/
+        function bindDropdowns() {
+            bindDropdown("USER", "#ddlClient_APBD");
+            bindDropdown("MODEL", "#ddlModel_APBD");
+        }
+
+        /* ==============================
+        VALIDATION
+        ================================*/
+        function validateProduct() {
+            if (!validateRequired("ddlClient_APBD", ["", "-1"], "Shipper is required")) return false;
+            if (!validateRequired("txtChassisNo_APBD", ["", " "], "Chassis No is required")) return false;
+            if (!validateRequired("ddlModel_APBD", ["", "-1"], "Model is required")) return false;
+            if (!validateRequired("txtInvPrice_APBD", ["", " ", "0"], "Invoice price is required")) return false;
+            return true;
+        }
+
+        $(document).on("input change", "#txtChassisNo_APBD,#txtInvPrice_APBD, #ddlClient_APBD,#ddlModel_APBD", function () {
+            $(this).removeClass("input-error");
+            $(this).next(".error-text").remove();
+        });
+
+        /* ==============================
+        ADD / UPDATE
+        ================================*/
+        $(document).on("click", "#btnAddProduct_APBD", function () {
+            if (!validateProduct()) return;
+            let encId = $("#hdnProductEncId").val();
+            let payload = {
+                ID: 0,
+                EncID: encId || null,
+                ClientId: parseInt($("#ddlClient_APBD").val()) || 0,
+                ModelId: parseInt($("#ddlModel_APBD").val()) || 0,
+                ChassisNo: $("#txtChassisNo_APBD").val().trim() || "",
+                InvoicePrice: parseInt($("#txtInvPrice_APBD").val().trim()) || 0,
+            };
+            // let _url = encId ? "/Product/UpdateProductAdditionalInfo" : "/Product/AddProductAdditionalInfo";
+            let _url = "/Product/AddProductAdditionalInfo";
+            $.ajax({
+                url: _url,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (res) {
+
+                    let type =
+                        res.status === 1 ? "success" :
+                            res.status === 2 ? "warning" : "error";
+
+                    let title =
+                        res.status === 1 ? "Success" :
+                            res.status === 2 ? "Already Exists" : "Error";
+
+                    ShowToast(type, title, res.message);
+
+                    if (res.status === 1) {
+                        // if (encId) {removeQueryString();}
+                        resetForm_AddProductByDocs();
+                    }
+                }
+            });
+
+        });
+
+        $(document).on("click", "#btnClearProduct_APBD", function () {
+            resetForm_AddProductByDocs();
+        });
+
+        function resetForm_AddProductByDocs() {
+            // Clear hidden ID
+            $("#hdnProductEncId").val(0);
+
+            // Clear all text inputs
+            $("#txtChassisNo_APBD,#txtInvPrice_APBD").val("");
+
+            // Reset all dropdowns
+            $("#ddlClient_APBD, #ddlModel_APBD").val("-1").trigger("chosen:updated");
+
+            $("#lblProductHeader_APBD").text("Add Product By Docs");
+            $("#spnProduct_APBD").text("Add Product By Docs");
+
+            // Reset button text if using for update/add
+            $("#btnAddProduct_APBD").text("Submit");
+
+            // Remove any error classes or messages
+            $(".input-error").removeClass("input-error");
+            $(".error-text").remove();
+
+        } 
+    </script>
+}

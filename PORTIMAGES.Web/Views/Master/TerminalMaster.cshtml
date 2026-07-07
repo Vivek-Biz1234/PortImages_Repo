@@ -1,0 +1,375 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">Terminal Master</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span>Terminal Master</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="table-card">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3">
+                    <form class="table-src-form position-relative m-0">
+                        <input type="text" id="txtSearch" class="form-control" placeholder="Search here...">
+                        <div class="src-btn">
+                            <span class="ti ti-search">search</span>
+                        </div>
+                    </form>
+                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addform"><i class="ti ti-plus"></i> Add Terminal</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="terminalTable" class="table align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="fw-medium">Sno</th>
+                                <th scope="col" class="fw-medium">Port Name</th>
+                                <th scope="col" class="fw-medium">Terminal Name</th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Date of Entry">DOE</abbr></th>
+                                <th scope="col" class="fw-medium">Created by</th>
+                                <th scope="col" class="fw-medium">Status</th>
+                                <th scope="col" class="fw-medium">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblpagedescription">Showing 1 to 10 of 50 entries</span>
+                    <nav class="custom-pagination" aria-label="Page navigation">
+                        <ul class="pagination mb-0 justify-content-center" id="pagination">
+                        </ul>
+                    </nav>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add New Task -->
+<div class="modal fade" id="addform" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-slideout" role="document">
+        <div class="modal-content bg-white">
+            <div class="modal-header">
+                <h5 class="modal-title mb-0" id="exampleModalLabel">Add Terminal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body p-3">
+                <input type="hidden" id="hdnTerminalId" />
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-3">
+                            <label class="label">Port Name<span class="text-danger"> *</span></label>
+                            <select class="form-select form-control" id="ddlPort_TM" aria-label="Floating label select example">
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="label">Terminal Name<span class="text-danger"> *</span></label>
+                            <input type="text" class="form-control" id="txtTerminalName" placeholder="Terminal Name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="label">Status<span class="text-danger"> *</span></label>
+                            <select class="form-select form-control" id="ddlTerminalStatus" aria-label="Floating label select example">
+                                <option value="-1" selected>Select Staus</option>
+                                <option value="1">Active</option>
+                                <option value="0">In-Active</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer p-3">
+                <button type="button" class="btn btn-xs btn-danger fw-normal text-white" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-xs btn-primary fw-normal text-white" id="btnAdd">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal confirmation-->
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script>
+        let terminalData = [];
+        let pageSize = 50;         // records per page
+        let currentPage = 1;
+        let filteredData = [];
+        $(document).ready(function () {
+            LoadTerminalList();
+            bindDropdowns();
+        });
+        function bindDropdowns() {
+            bindDropdown("PORT", "#ddlPort_TM");
+        }
+        function validateContols() {            
+            if (!validateRequired("ddlPort_TM", ["-1", ""], "Please select port !")) return false;
+            if (!validateRequired("txtTerminalName", ["", " "], "Terminal name is required !")) return false;
+            if (!validateRequired("ddlTerminalStatus", ["-1", ""], "Please select status !")) return false;
+            return true;
+        }
+        $(document).on("click", "#btnAdd", function () {
+            if (!validateContols()) {
+                return;
+            }
+            let TerminalName = $("#txtTerminalName").val().trim();
+            let PortId = $("#ddlPort_TM").val();
+            let Status = $("#ddlTerminalStatus").val();
+            let payload = {
+                portId: PortId,
+                terminalName: TerminalName,
+                isActive: Status === "1" ? true : false,
+                createdBy: 0
+            };
+
+            $.ajax({
+                url: "/Master/AddTerminal",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (resp) {
+                    let type = resp.status === 1 ? "success" : resp.status === 2 ? "warning" : "error";
+                    let title = resp.status === 1 ? "Success" : resp.status === 2 ? "Already Exists" : "Error";
+
+                    if (resp.status === 1) {
+                        ResetTerminalForm();
+                        LoadTerminalList();
+                    }
+                    ShowToast(type, title, resp.message);
+
+                }
+            });
+        });
+        $(document).on("input change", "#txtTerminalName, #ddlTerminalStatus, #ddlPort_TM", function () {
+            $(this).removeClass("input-error");
+            $(this).next(".error-text").remove();
+        });
+        $(document).on("click", '[data-bs-target="#addform"]', function () {
+            ResetTerminalForm();
+        });
+
+        function LoadTerminalList() {
+            $.ajax({
+                url: "/Master/GetTerminalList",
+                type: "GET",
+                success: function (res) {
+                    if (res.status === 1) {
+                        terminalData = res.data || [];
+                        filteredData = terminalData;
+                        currentPage = 1;
+                        RenderTable();
+                        renderPageInfo();
+                    }
+                }
+            });
+        }
+        function RenderTable() {
+            let tbody = "";
+
+            let start = (currentPage - 1) * pageSize;
+            let end = start + pageSize;
+
+            let pageData = filteredData.slice(start, end);
+
+            $.each(pageData, function (i, row) {
+                tbody += `
+                                                <tr>
+                                                    <td>${start + i + 1}</td>
+                                                    <td>${row.portName}</td>
+                                                    <td>${row.terminalName}</td>
+                                                    <td>${row.createdOn}</td>
+                                                    <td>${row.createdBy}</td>
+                                                    <td>
+                                                        ${row.isActive
+                        ? '<span class="text-success bg-success bg-opacity-10 default-badge">Active</span>'
+                        : '<span class="text-danger bg-danger bg-opacity-10 default-badge">Inactive</span>'
+                    }
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-start gap-3">
+                                                            <button class="bg-transparent p-0 border-0 hover-text-success btnEdit" data-id="${row.id}" data-title="Edit">
+                                                                <i class="ti ti-pencil fs-16"></i>
+                                                            </button>
+                                                            <button class="bg-transparent p-0 border-0 hover-text-danger btnDelete" data-id="${row.id}" data-title="Delete">
+                                                                <i class="ti ti-trash fs-16">delete</i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>`;
+            });
+
+            $("#terminalTable tbody").html(tbody);
+            RenderPagination();
+        }
+        function RenderPagination() {
+            let totalPages = Math.ceil(filteredData.length / pageSize);
+            let pagHtml = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                pagHtml += `
+                                    <li class="page-item">
+                                                <button class="page-link ${i === currentPage ? 'active' : ''} page-btn"
+                                            data-page="${i}">
+                                            ${i}
+                                        </button>
+                                    </li>`;
+            }
+
+            $("#pagination").html(pagHtml);
+        }
+        $(document).on("click", ".page-btn", function () {
+            currentPage = parseInt($(this).data("page"));
+            RenderTable();
+            renderPageInfo();
+        });
+        function renderPageInfo() {
+            let page = parseInt(currentPage);
+            let size = parseInt(pageSize);
+            let total = filteredData.length;
+            let start = (page - 1) * size + 1;
+            let end = page * size;
+            if (end > total) { end = total; }
+            if (total === 0) {
+                $("#lblpagedescription").html(`
+                            <span class="text-danger">
+                                <i class="ti ti-info-circle"></i>
+                                No data found
+                            </span>
+                        `);
+                return;
+            }
+            let desc = `Showing ${start} to ${end} of ${total} entries`;
+            $("#lblpagedescription").text(desc);
+        }
+
+        function ResetTerminalForm() {
+
+            // Close modal
+            var modalEl = $("#addform");
+            var modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+
+            // Clear controls
+            $("#txtTerminalName").val("");
+            $("#ddlPort_TM").val("-1").trigger("chosen:updated");;
+            $("#ddlTerminalStatus").val("-1");
+
+            // Clear validation errors
+            $("#txtTerminalName, #ddlTerminalStatus, #ddlPort_TM").removeClass("input-error");
+            $(".error-text").remove();
+
+            //Refresh the button and modal
+            $("#btnUpdate").text("Submit").attr("id", "btnAdd");
+            $("#exampleModalLabel").text("Add Terminal");
+        }
+
+        $(document).on("click", ".btnEdit", function () {
+            ResetTerminalForm();
+            let id = $(this).data("id");
+            $.ajax({
+                url: "/Master/GetTerminalById",
+                type: "GET",
+                data: { ID: id },
+                success: function (res) {
+                    if (res.status === 1) {
+                        $("#exampleModalLabel").text("Edit Terminal");
+                        $("#hdnTerminalId").val(res.data.id);
+                        $("#txtTerminalName").val(res.data.terminalName);
+                        $("#ddlPort_TM").val(res.data.portId).trigger("chosen:updated");;
+                        $("#ddlTerminalStatus").val(res.data.isActive ? "1" : "0");
+                        $("#btnAdd").text("Update").attr("id", "btnUpdate");
+
+                        var modal = new bootstrap.Modal($("#addform"));
+                        modal.show();
+                    }
+                    else {
+                        ShowToast("info", "Not Found", res.message);
+                    }
+                }
+            });
+        });
+        $(document).on("click", "#btnUpdate", function () {
+            if (!validateContols()) {
+                return;
+            }
+            let payload = {
+                id: $("#hdnTerminalId").val(),
+                portId: $("#ddlPort_TM").val(),
+                terminalName: $("#txtTerminalName").val().trim(),
+                isActive: $("#ddlTerminalStatus").val() === "1"
+            };
+            $.ajax({
+                url: "/Master/UpdateTerminal",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (res) {
+                    let type = res.status === 1 ? "success" : res.status === 2 ? "warning" : res.status === -1 ? "info" : "error";
+                    let title = res.status === 1 ? "Success" : res.status === 2 ? "Already Exists" : res.status === -1 ? "Not Found" : "Error";
+                    if (res.status === 1) {
+                        ResetTerminalForm();
+                        LoadTerminalList();
+                    }
+                    ShowToast(type, title, res.message);
+                }
+            });
+        });
+        $(document).on("click", ".btnDelete", function () {
+            let id = $(this).data("id");
+
+            ShowConfirmToast(
+                "Do you want to delete this terminal?",
+                () => { DeleteTerminal(id); }
+            );
+        });
+        function DeleteTerminal(id) {
+            $.ajax({
+                url: "/Master/DeleteTerminal",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ id: id }),
+                success: function (res) {
+
+                    let type = res.status === 1 ? "success" : res.status === -1 ? "warning" : "error";
+                    let title = res.status === 1 ? "Deleted!" : res.status === -1 ? "Not Found!" : "Failed!";
+
+                    ShowToast(type, title, res.message);
+
+                    if (res.status === 1) {
+                        LoadTerminalList();
+                    }
+                }
+            });
+        }
+        $(document).on("keyup", "#txtSearch", function () {
+            let value = $(this).val().toLowerCase().trim();
+
+            filteredData = terminalData.filter(row =>
+                Object.values(row).some(val =>
+                    String(val).toLowerCase().includes(value)
+                )
+            );
+            currentPage = 1;
+            RenderTable();
+            renderPageInfo();
+        });
+    </script>
+
+}

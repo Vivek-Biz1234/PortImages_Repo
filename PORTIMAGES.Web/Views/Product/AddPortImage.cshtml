@@ -1,0 +1,125 @@
+﻿@using System.Security.Claims
+@using PORTIMAGES.Application.Products.DTOs
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+
+@model ProductInnerDetailsDTO
+<div class="main-content-container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">Upload Image</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span>Upload Image</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="card">
+                <input type="hidden" id="hdnProductEncId_API" value="@Model.EncID" />
+                <div class="card-header">
+                    <a href="/Product/ViewProducts" class="btn btn-sm btn-primary float-end"><i class="ti ti-eye"></i>View Products</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Chassis No</label>
+                                <input type="text" id="txtChassisNo_API" class="form-control" placeholder="Chassis No" value="@Model.ChassisNo">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Maker</label>
+                                <input type="text" id="txtMaker_API" class="form-control" value="@Model.MakerName" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Model</label>
+                                <input type="text" id="txtModel_API" class="form-control" value="@Model.ModelName" disabled="disabled">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Component Name</label>
+                                <input type="text" id="txtComponentName" class="form-control" placeholder="Component name like tyres.." value="@Model.ComponentName" />
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Component Weight</label>
+                                <input type="text" id="txtComponentWeight" class="form-control only-number" placeholder="Component Weight" value="@Model.ComponentWeight">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Unit</label>
+                                @* <input type="text" id="txtWeightUnit" class="form-control" placeholder="Unit"> *@
+                                <select class="form-select form-control" id="ddlWeightUnit" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Image Upload</label>
+                                <div class="d-flex gap-2">
+                                    <input type="file" class="form-control" id="ImageFile" multiple accept="image/*" />
+                                    <button type="button" class="btnCamera" id="btnOpenCamera">
+                                        <i class="ti ti-camera"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="col-lg-3 mt-4">
+                            <button type="button" class="btn btn-sm btn-primary fw-normal text-white float-end" id="btnAdd">Submit</button>
+                        </div>
+                        <div class="row mt-3 d-none" id="imagePreview">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================
+     MODAL
+====================== -->
+<div class="camera-modal d-none" id="cameraModal" tabindex="-1">
+    <div class="camera-box">
+        <video id="cameraStream" autoplay playsinline></video>
+        <div class="camera-actions">
+            <button id="btnCapture" class="btnCircle capture"><i class="ti ti-capture"></i></button>
+            <button id="btnCloseCamera" class="btnCircle close"><i class="ti ti-x"></i></button>
+        </div>
+    </div>
+</div>
+ 
+<div class="modal fade" id="imagePreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-md bg-white" style="border-radius:20px;overflow:hidden;">
+        <div class="modal-content bg-transparent border-0 shadow-none">
+            <div class="modal-body text-center py-3">
+                <img id="previewFullImage" class="img-fluid rounded" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const selectedWeightUnit = '@Model.WeightUnit';
+    </script>
+    <script src="~/js/common/dropdowns.js"></script>
+    <script src="~/js/common/helper.js"></script>
+    <script src="~/js/master/add-port-images.js"></script>
+}

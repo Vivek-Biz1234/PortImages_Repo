@@ -1,0 +1,323 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+
+
+<div class="main-content-container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0" id="lblProductHeader_AssignBroker">Assign Broker</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span id="spnProduct_AssignBroker">Assign Broker</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="card">
+                <input type="hidden" id="hdnProductEncId" />
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Shipper</label>
+                                <select class="form-select form-control" id="ddlClient_AsssignBroker" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Model</label>
+                                <select class="form-select form-control" id="ddlModel_AsssignBroker" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Chassis No.</label>
+                                <input type="text" class="form-control" id="txtChassisNo_AsssignBroker" placeholder="Chassis No.">
+                            </div>
+                        </div>
+                        <div class="col-lg-12 d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-sm btn-danger fw-normal text-white" id="btnClear_AsssignBroker">Clear</button>
+                            <button type="button" class="btn btn-sm btn-primary fw-normal text-white" id="btnSearch_AsssignBroker">Filter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-card mt-4">
+                <div class="table-responsive position-relative">
+                    <table id="ProductBrokerTable" class="table align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="fw-medium">
+                                    <input type="checkbox" class="chkAll_AssignBroker" />
+                                </th>
+                                <th scope="col" class="fw-medium">#</th>
+                                <th scope="col" class="fw-medium">Chassis No</th>
+                                <th scope="col" class="fw-medium">Model</th>
+                                <th scope="col" class="fw-medium">Shipper</th>
+                                <th scope="col" class="fw-medium">Broker</th>
+                                <th scope="col" class="fw-medium">Assign By</th>
+                                <th scope="col" class="fw-medium">Assign At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div class="top-header" id="divControls">
+                        <div class="headLeft text-white"></div>
+                        <div class="headRight">
+                            <select class="form-select" id="ddlBroker_AsssignBroker" aria-label="Floating label select example">
+                                <option>Select Broker</option>
+                            </select>
+                            <button class="btn btn-xs btn-primary d-flex align-items-center gap-1 justify-content-center" id="btnAssign_AssignBroker"><i class="ti ti-circle-check"></i> Assign</button>
+                            <button class="btn btn-xs btn-danger d-flex align-items-center gap-1 justify-content-center" id="btnCancel_AssignBroker"><i class="ti ti-xbox-x"></i> Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblpagedescription">Showing 1 to 10 of 50 entries</span>
+                    <nav class="custom-pagination" aria-label="Page navigation">
+                        <ul class="pagination mb-0 justify-content-center" id="pagination">
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script src="~/js/common/helper.js"></script>
+    <script>
+
+        let productBrokerData = [];
+        let filteredProductBrokerData = [];
+        let pageSize = 50;
+        let currentPage = 1;
+
+        $(document).ready(function () {
+            bindDropdowns();
+            $("#divControls").hide();
+        });
+
+        /* ==============================
+        DROPDOWNS (AJAX)
+        ================================*/
+        function bindDropdowns() {
+            bindDropdown("USER", "#ddlClient_AsssignBroker", null, null, 0);
+            bindDropdown("MODEL", "#ddlModel_AsssignBroker", null, null, 0);
+            bindDropdown("BROKER", "#ddlBroker_AsssignBroker", null, null, 0, "Select Broker");
+        }
+        $(document).on("click", "#btnSearch_AsssignBroker", function () {
+            loadProductBrokerList();
+        });
+
+        function loadProductBrokerList() {
+            let ChassisNo = $("#txtChassisNo_AsssignBroker").val();
+            let ClientId = $("#ddlClient_AsssignBroker").val();
+            let ModelId = $("#ddlModel_AsssignBroker").val();
+
+            let payload = {
+                chassisNo: ChassisNo,
+                clientId: ClientId,
+                modelId: ModelId
+            };
+
+            $.ajax({
+                url: "/Product/GetProductBrokerList",
+                type: "GET",
+                data: payload,
+                success: function (res) {
+                    if (res.status === 1) {
+                        productBrokerData = res.data || [];
+                        filteredProductBrokerData = productBrokerData;
+                        currentPage = 1;
+                        renderTable();
+                        renderPageInfo();
+                    }
+                }
+            });
+        }
+
+        /* ==============================
+           TABLE RENDER
+        ================================*/
+        function renderTable() {
+            let start = (currentPage - 1) * pageSize;
+            let end = start + pageSize;
+            let pageData = filteredProductBrokerData.slice(start, end);
+            debugger;
+            let tbody = "";
+
+            $.each(pageData, function (i, row) {
+                tbody += `
+                                <tr>
+                                        <td><input type="checkbox" class="chk_AssignBroker" data-id="${row.id}" /></td>
+                                        <td>${start + i + 1}</td>
+                                        <td>${row.chassisNo}</td>
+                                        <td>${row.modelName}</td>
+                                        <td>${row.shipper}</td>
+                                        <td>${row.brokerName}</td>
+                                        <td>${row.assignBy}</td>
+                                        <td>${row.assignAt}</td>
+                                </tr>`;
+            });
+
+            $("#ProductBrokerTable tbody").html(tbody);
+            renderPagination();
+            resetSelectionControls();
+        }
+
+        /* ==============================
+           PAGINATION
+        ================================*/
+        function renderPagination() {
+            let totalPages = Math.ceil(filteredProductBrokerData.length / pageSize);
+            let html = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+                                <li class="page-item">
+                                    <button class="page-link ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>
+                                </li>`;
+            }
+
+            $("#pagination").html(html);
+        }
+
+        $(document).on("click", ".page-link", function () {
+            currentPage = parseInt($(this).data("page"));
+            renderTable();
+            renderPageInfo();
+        });
+
+        function renderPageInfo() {
+            let total = filteredProductBrokerData.length;
+            let start = (currentPage - 1) * pageSize + 1;
+            let end = currentPage * pageSize;
+            if (end > total) end = total;
+
+            if (total === 0) {
+                $("#lblpagedescription").html(`
+                                    <span class="text-danger">
+                                        <i class="ti ti-info-circle"></i>
+                                        No data found
+                                    </span>`);
+                return;
+            }
+
+            $("#lblpagedescription").text(`Showing ${start} to ${end} of ${total} entries`);
+        }
+
+        $(document).on("change", ".chkAll_AssignBroker", function () {
+            let isChecked = $(this).is(":checked");
+            $(".chk_AssignBroker").prop("checked", isChecked);
+            updateSelectionControls();
+        });
+
+        $(document).on("change", ".chk_AssignBroker", function () {
+            let total = $(".chk_AssignBroker").length;
+            let checked = $(".chk_AssignBroker:checked").length;
+            $(".chkAll_AssignBroker").prop("checked", total === checked);
+            updateSelectionControls();
+        });
+
+        function updateSelectionControls() {
+            let selectedCount = $(".chk_AssignBroker:checked").length;
+            if (selectedCount > 0) {
+                $("#divControls").show();
+                $(".headLeft").text(selectedCount + " row(s) selected");
+            }
+            else {
+                $("#divControls").hide();
+                $(".headLeft").text("");
+            }
+        };
+
+        function resetSelectionControls() {
+            $(".chkAll_AssignBroker").prop("checked", false);
+            $(".chk_AssignBroker").prop("checked", false);
+            $("#ddlBroker_AsssignBroker").val("0").trigger("chosen:updated");
+            updateSelectionControls();
+        }
+        $(document).on("click", "#btnCancel_AssignBroker", function () {
+            resetSelectionControls();
+        });
+
+
+
+        $(document).on("click", "#btnAssign_AssignBroker", function () {
+
+            let selectedIds = $(".chk_AssignBroker:checked")
+                .map(function () {
+                    return $(this).attr("data-id");
+                })
+                .get();
+            let brokerId = $("#ddlBroker_AsssignBroker").val();
+
+            if (selectedIds.length === 0) {
+                    ShowToast("warning", "Information", "Please select at least one row.");
+                    return;
+            }
+
+            if (!brokerId || parseInt(brokerId) === 0) {
+                ShowToast("warning", "Information", "Please select a Broker.");
+                return;
+            }
+            let productIds = selectedIds.map(id => ({
+                productId: id
+            }));
+
+            let payload = {
+                productIds: productIds,
+                brokerId: parseInt(brokerId)
+            };
+
+            $("#btnAssign_AssignBroker").prop("disabled", true).text("Assigning...");
+
+            $.ajax({
+                url: "/Product/AssignBroker",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+
+                success: function (res) {
+                    let type =res.status === 1 ? "success" :res.status === 2 ? "warning" : "error";
+                    let title =res.status === 1 ? "Success" :res.status === 2 ? "Already Exists" : "Error";
+
+                    ShowToast(type, title, res.message);
+
+                    if (res.status === 1) {
+                        loadProductBrokerList();
+                        resetSelectionControls();
+                    }
+                },
+
+                error: function () {
+                    ShowToast("danger", "Error", "Server error occurred!");
+                },
+
+                complete: function () {
+                    $("#btnAssign_AssignBroker").prop("disabled", false).text("Assign");
+                }
+            });
+        });
+        $(document).on("click", "#btnClear_AsssignBroker", function () {
+            $("#ddlClient_AsssignBroker").val("0").trigger("chosen:updated");
+            $("#ddlModel_AsssignBroker").val("0").trigger("chosen:updated");
+            $("#txtChassisNo_AsssignBroker").val("");
+        });
+
+    </script>
+}

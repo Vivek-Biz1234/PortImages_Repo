@@ -1,0 +1,119 @@
+﻿@model PORTIMAGES.Application.Products.DTOs.ViewProductDetailsDTO
+@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/User/_UserLayout.cshtml";
+}
+
+
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2 mt-1">
+        <h5 class="mb-0">View Product Images</h5>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="table-card mb-3 p-3">
+                <div class="row">
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Terminal</label>
+                            <input type="text" class="form-control" value="@Model.TerminalName" id="txtTerminal_PD" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Chassis Number</label>
+                            <input type="text" class="form-control" id="txtChassis_PD" value="@Model.ChassisNo" disabled>                    
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Vessel</label>
+                            <input type="text" class="form-control" id="txtVessel_PD" value="@Model.ShipName" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Yard In Date</label>
+                            <input type="text" class="form-control" id="txtYardInDate_PD" value="@Model.YardInDate" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Inventory Status</label>
+                            <input type="text" class="form-control" id="txtInventoryStatus_PD" value="@Model.InventoryStatus" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Make</label>
+                            <input type="text" class="form-control" id="txtMaker_PD" value="@Model.MakerName" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Voyage Number</label>
+                            <input type="text" class="form-control" id="txtVoyageNo_PD" value="@Model.VoyageNo" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label"><abbr data-title="Scheduled Shipping Date">S Shipping Date</abbr></label>
+                            <input type="text" class="form-control" id="txtSSDate_PD" value="@Model.ScheduledShippingDate" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Storage Period</label>
+                            <input type="text" class="form-control" id="txtStoragePeriond_PD" value="@Model.StoragePeriod" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Model</label>
+                            <input type="text" class="form-control" id="txtModel_PD" value="@Model.ModelName" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Radiation Dose(μSv/h)</label>
+                            <input type="text" class="form-control" id="radiation" value="" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                        <div class="filter-group">
+                            <label class="label">Shipping Date</label>
+                            <input type="text" class="form-control" id="txtSDate_PD" value="@Model.ShippingDate" disabled>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-12 col-12">
+                        <div class="filter-group">
+                            <label class="label">Notes</label>
+                            <input type="text" class="form-control" id="txtNotes_PD" value="@Model.Notes" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="table-card p-3">
+                <div class="flex-photo-block">
+                    @if (Model.Images != null && Model.Images.Any())
+                    {
+                        var index = 1;
+                        foreach (var img in Model.Images)
+                        {
+                            <div class="flex-item" data-index="@index">
+                                <img src="@img" class="img-fluid" alt="Product Image" />
+                            </div>
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No images available</p>
+                    }                     
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

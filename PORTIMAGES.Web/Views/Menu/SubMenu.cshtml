@@ -1,0 +1,395 @@
+﻿@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">Sub Menu Master</h5>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">Sub Menu Master</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="table-card">
+
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3">
+                    <form class="table-src-form position-relative m-0">
+                        <input type="text" id="txtSearchSubMenu" class="form-control" placeholder="Search here...">
+                        <div class="src-btn">
+                            <span class="ti ti-search">search</span>
+                        </div>
+                    </form>
+
+                    <button type="button" class="btn btn-sm btn-primary"
+                            data-bs-toggle="modal" data-bs-target="#frmSubMenu">
+                        <i class="ti ti-plus"></i> Add Sub Menu
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table id="SubMenuTable" class="table align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th>Sno</th>
+                                <th>Main Menu</th>
+                                <th>Sub Menu Name</th>
+                                <th>Icon</th>
+                                <th>Controller</th>
+                                <th>Action</th>
+                                <th>ShortOrder</th>
+                                <th>Status</th>
+                                <th>Created By</th>
+                                <th>Created On</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblSubMenuPageDescription"></span>
+                    <nav class="custom-pagination">
+                        <ul class="pagination mb-0" id="SubMenuPagination"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================
+     MODAL
+====================== -->
+<div class="modal fade" tabindex="-1" id="frmSubMenu" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-slideout" role="document">
+        <div class="modal-content bg-white">
+            <div class="modal-header">
+                <h5 class="modal-title mb-0" id="modalLabelSubMenu">Add Sub Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+
+            <div class="modal-body p-3">
+                <input type="hidden" id="hdnSubMenuId" value="0" />
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-3">
+                            <label class="label">Main Menu<span class="text-danger"> *</span></label>
+                            <select id="ddlMainMenu" class="form-select form-control"></select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="label">Sub Menu Name<span class="text-danger"> *</span></label>
+                            <input type="text" id="txtSubMenuName" class="form-control" placeholder="Enter Sub Menu Name" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="label">Icon</label>
+                            <input type="text" id="txtSubMenuIcon" class="form-control" placeholder="Icon (optional)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="label">Controller Name<span class="text-danger"> *</span></label>
+                            <input type="text" id="txtControllerName" class="form-control" placeholder="Controller Name" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="label">Action Name<span class="text-danger"> *</span></label>
+                            <input type="text" id="txtActionName" class="form-control" placeholder="Action Name" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="label">Short Order</label>
+                            <select id="ddlShortOrder" class="form-select form-control">                               
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="label">Status<span class="text-danger"> *</span></label>
+                            <select id="ddlSubMenuStatus" class="form-select form-control">
+                                <option value="-1">Select Status</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-xs btn-danger" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-xs btn-primary" id="btnSubMenuSave">Submit</button>
+            </div> 
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script>
+        let subMenuData = [];
+        let filteredSubMenuData = [];
+        let pageSize = 50;
+        let currentPage = 1;
+
+        $(document).ready(function () {
+            bindDropdowns();
+            LoadSubMenuList();
+        });
+        function bindDropdowns() {
+            bindDropdown("MAINMENU", "#ddlMainMenu", null, null, -1);
+            bindDropdown("NUMBERS", "#ddlShortOrder", null, null, -1);
+        }
+
+
+        /* ==============================
+           LOAD SUB MENU LIST
+        ================================*/
+        function LoadSubMenuList() {
+            let mainMenuId = $("#ddlMainMenu").val() || 0;
+            $.get("/Menu/GetSubMenuList", { mainMenuId: mainMenuId }, function (res) {
+                if (res.status === 1) {
+                    subMenuData = res.data || [];
+                    filteredSubMenuData = subMenuData;
+                    currentPage = 1;
+                    renderSubMenuTable();
+                    renderSubMenuPageInfo();
+                }
+            });
+        }
+
+        /* ==============================
+           RENDER TABLE
+        ================================*/
+        function renderSubMenuTable() {
+            let tbody = "";
+            let start = (currentPage - 1) * pageSize;
+            let end = start + pageSize;
+            let pageData = filteredSubMenuData.slice(start, end);
+
+            $.each(pageData, function (i, row) {
+                tbody += `
+                            <tr>
+                                <td>${start + i + 1}</td>
+                                <td>${row.mainMenuName}</td>
+                                <td>${row.subMenuName}</td>
+                                <td>${row.icon ?? '-'}</td>
+                                <td>${row.controllerName ?? '-'}</td>
+                                <td>${row.actionName ?? '-'}</td>
+                                <td>${row.shortOrder ?? '-'}</td>
+                                <td>${row.isActive
+                        ? '<span class="text-success bg-success bg-opacity-10 default-badge">Active</span>'
+                        : '<span class="text-danger bg-danger bg-opacity-10 default-badge">Inactive</span>'}</td>
+                                <td>${row.createdBy}</td>
+                                <td>${row.createdOn}</td>
+                                <td>
+                                    <div class="d-flex gap-3">
+                                        <button class="btnEditSubMenu bg-transparent border-0" data-id="${row.subMenuId}">
+                                            <i class="ti ti-pencil fs-16"></i>
+                                        </button>
+                                        <button class="btnDeleteSubMenu bg-transparent border-0" data-id="${row.subMenuId}">
+                                            <i class="ti ti-trash fs-16"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>`;
+            });
+
+            $("#SubMenuTable tbody").html(tbody);
+            renderSubMenuPagination();
+        }
+
+        /* ==============================
+           PAGINATION
+        ================================*/
+        function renderSubMenuPagination() {
+            let totalPages = Math.ceil(filteredSubMenuData.length / pageSize);
+            let html = "";
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<li class="page-item">
+                                    <button class="page-link ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>
+                                 </li>`;
+            }
+            $("#SubMenuPagination").html(html);
+        }
+
+        $(document).on("click", "#SubMenuPagination .page-link", function () {
+            currentPage = parseInt($(this).data("page"));
+            renderSubMenuTable();
+            renderSubMenuPageInfo();
+        });
+
+        function renderSubMenuPageInfo() {
+            let total = filteredSubMenuData.length;
+            if (total === 0) {
+                $("#lblSubMenuPageDescription").html(
+                    `<span class="text-danger"><i class="ti ti-info-circle"></i> No data found</span>`
+                );
+                return;
+            }
+
+            let start = (currentPage - 1) * pageSize + 1;
+            let end = Math.min(currentPage * pageSize, total);
+            $("#lblSubMenuPageDescription").text(`Showing ${start} to ${end} of ${total} entries`);
+        }
+
+        /* ==============================
+           SEARCH
+        ================================*/
+        $(document).on("keyup", "#txtSearchSubMenu", function () {
+            let value = $(this).val().toLowerCase().trim();
+            filteredSubMenuData = subMenuData.filter(row =>
+                Object.values(row).some(v => String(v).toLowerCase().includes(value))
+            );
+            currentPage = 1;
+            renderSubMenuTable();
+            renderSubMenuPageInfo();
+        });
+
+        /* ==============================
+           VALIDATION
+        ================================*/
+        function validateSubMenu() {
+            if (!validateRequired("ddlMainMenu", ["", "0", "-1"], "Main Menu is required")) return false;
+            if (!validateRequired("txtSubMenuName", ["", " "], "Sub Menu Name is required")) return false;
+            if (!validateRequired("ddlSubMenuStatus", ["", "-1"], "Status is required")) return false;
+            return true;
+        }
+
+        /* ==============================
+           ADD / UPDATE
+        ================================*/
+        $(document).on("click", "#btnSubMenuSave", function () {
+            if (!validateSubMenu()) return;
+
+            let _ID = parseInt($("#hdnSubMenuId").val()) || 0;
+
+            let payload = {
+                SubMenuId: _ID,
+                MainMenuId: parseInt($("#ddlMainMenu").val()),
+                SubMenuName: $("#txtSubMenuName").val().trim(),
+                Icon: $("#txtSubMenuIcon").val().trim(),
+                ControllerName: $("#txtControllerName").val().trim(),
+                ActionName: $("#txtActionName").val().trim(),
+                ShortOrder: $("#ddlShortOrder").val(),
+                IsActive: $("#ddlSubMenuStatus").val() === "1",
+                CreatedBy: 0,
+                UpdatedBy: 0
+            };
+
+            let url = _ID === 0 ? "/Menu/AddSubMenu" : "/Menu/UpdateSubMenu";
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (res) {
+                    let type = res.status === 1 ? "success" :
+                        res.status === 2 ? "warning" :
+                            res.status === -1 ? "info" : "error";
+
+                    let title = res.status === 1 ? "Success" :
+                        res.status === 2 ? "Already Exists" :
+                            res.status === -1 ? "Not Found" : "Error";
+
+                    if (res.status === 1) {
+                        resetSubMenuForm();
+                        LoadSubMenuList();
+                    }
+
+                    ShowToast(type, title, res.message);
+                },
+                error: function () {
+                    ShowToast("error", "Error", "Something went wrong while saving the sub menu.");
+                }
+            });
+        });
+
+        /* ==============================
+           EDIT
+        ================================*/
+        $(document).on("click", ".btnEditSubMenu", function () {
+            let id = $(this).data("id");
+            $.get("/Menu/GetSubMenuById", { subMenuId: id }, function (res) {
+                if (res.status === 1) {
+                    let d = res.data;
+                    $("#hdnSubMenuId").val(d.subMenuId);
+                    $("#ddlMainMenu").val(d.mainMenuId).trigger("chosen:updated");;
+                    $("#txtSubMenuName").val(d.subMenuName);
+                    $("#txtSubMenuIcon").val(d.icon ?? '');
+                    $("#txtControllerName").val(d.controllerName ?? '');
+                    $("#txtActionName").val(d.actionName ?? '');
+                    $("#ddlShortOrder").val(d.shortOrder ?? '0').trigger("chosen:updated");;
+                    $("#ddlSubMenuStatus").val(d.isActive ? "1" : "0");
+
+                    $("#modalLabelSubMenu").text("Edit Sub Menu");
+                    $("#btnSubMenuSave").text("Update");
+
+                    new bootstrap.Modal("#frmSubMenu").show();
+                }
+            });
+        });
+
+        /* ==============================
+           DELETE
+        ================================*/
+        $(document).on("click", ".btnDeleteSubMenu", function () {
+            let id = $(this).data("id");
+            ShowConfirmToast("Delete this sub menu?", () => {
+                $.post("/Menu/DeleteSubMenu", { subMenuId: id }, function (res) {
+                    let type = res.status === 1 ? "success" : "error";
+                    let title = res.status === 1 ? "Deleted!" : "Failed!";
+                    ShowToast(type, title, res.message);
+                    if (res.status === 1) LoadSubMenuList();
+                });
+            });
+        });
+
+        /* ==============================
+           RESET FORM
+        ================================*/
+        function resetSubMenuForm() {
+            $("#hdnSubMenuId").val(0);
+            $("#ddlMainMenu").val("0").trigger("chosen:updated");;
+            $("#txtSubMenuName").val("");
+            $("#txtSubMenuIcon").val("");
+            $("#txtControllerName").val("");
+            $("#txtActionName").val("");
+            $("#ddlShortOrder").val("0").trigger("chosen:updated");;
+            $("#ddlSubMenuStatus").val("-1");
+            $("#modalLabelSubMenu").text("Add Sub Menu");
+            $("#btnSubMenuSave").text("Submit");
+            bootstrap.Modal.getInstance("#frmSubMenu")?.hide();
+            $(".input-error").removeClass("input-error");
+            $(".error-text").remove();
+        }
+
+        $(document).on("input change", "#frmSubMenu input, #frmSubMenu select", function () {
+            $(this).removeClass("input-error");
+            $(this).next(".error-text").remove();
+        });
+
+        $(document).on("click", '[data-bs-target="#frmSubMenu"]', function () {
+            resetSubMenuForm();
+        });
+        $("#frmSubMenu").on("hidden.bs.modal", function () {
+            resetBrokerForm();
+        });
+
+    </script>
+}

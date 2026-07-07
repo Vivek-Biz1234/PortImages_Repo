@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-PORTIMAGES.IntegrationService-eacd45ce-a739-480c-b9c5-8da26ea54337</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PORTIMAGES.Application\PORTIMAGES.Application.csproj" />
+    <ProjectReference Include="..\PORTIMAGES.Common\PORTIMAGES.Common.csproj" />
+    <ProjectReference Include="..\PORTIMAGES.Domain\PORTIMAGES.Domain.csproj" />
+    <ProjectReference Include="..\PORTIMAGES.Infrastructure\PORTIMAGES.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+    <Folder Include="Constants\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,362 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+<div class="main-content-container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0" id="lblProductHeader_CCA">Confirm Car Availability</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span id="spnProduct_CCA">Confirm Car Availability</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="card">
+                <input type="hidden" id="hdnProductEncId" />
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Chassis No.</label>
+                                <input type="text" class="form-control" id="txtChassisNo_CCA" placeholder="Chassis No.">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Ship Name</label>
+                                <select class="form-select form-control" id="ddlShip_CCA" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Terminal</label>
+                                <select class="form-select form-control" id="ddlTerminal_CCA" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Found</label>
+                                <select class="form-select form-control" id="ddlFound_CCA" aria-label="Floating label select example">
+                                    <option value="-1">All</option>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-sm btn-danger fw-normal text-white" id="btnClear_CCA">Clear</button>
+                            <button type="button" class="btn btn-sm btn-primary fw-normal text-white" id="btnFilter_CCA">Filter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="table-card mt-4">
+                <div class="table-responsive position-relative overflow-visible">
+                    <table id="ProductTable_CCA" class="table align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="fw-medium">#</th>
+                                <th scope="col" class="fw-medium">Chassis No</th>
+                                <th scope="col" class="fw-medium">Model</th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Ordered Terminal">O Terminal</abbr></th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Arrived Terminal">A Terminal</abbr></th>
+                                <th scope="col" class="fw-medium">Ship Name</th>
+                                <th scope="col" class="fw-medium">Found By</th>
+                                <th scope="col" class="fw-medium">Found At</th>
+                                <th scope="col" class="fw-medium">Found</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div class="top-header" id="divControls">
+                        <div class="headLeft text-white">You can update terminal.</div>
+                        <div class="headRight">
+                            <select class="form-select myDropdown" id="ddlTerminal1_CCA" aria-label="Floating label select example">
+                                <option>Select Terminal</option>
+                            </select>
+                            <button class="btn btn-xs btn-primary d-flex align-items-center gap-1 justify-content-center" id="btnUpdateTerminal_CCA"><i class="ti ti-circle-check"></i> Update</button>
+                            <button class="btn btn-xs btn-danger d-flex align-items-center gap-1 justify-content-center" id="btnCancel_CCA"><i class="ti ti-xbox-x"></i> Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblpagedescription">Showing 1 to 10 of 50 entries</span>
+                    <nav class="custom-pagination" aria-label="Page navigation">
+                        <ul class="pagination mb-0 justify-content-center" id="pagination">
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script src="~/js/common/helper.js"></script>
+    <script>
+
+        let productData_CCA = [];
+        let filteredProductData_CCA = [];
+        let pageSize = 50;
+        let currentPage = 1;
+        let totalCount = 0;
+        let portId = 0;
+
+        $(document).ready(function () {
+            bindDropdowns();
+            toggleControls(false);
+        });
+
+        /* ==============================
+        DROPDOWNS (AJAX)
+        ================================*/
+        function bindDropdowns() {
+            bindDropdown("SHIP", "#ddlShip_CCA", null, null, 0);
+            bindDropdown("TERMINAL", "#ddlTerminal_CCA", null, null, 0);            
+        }
+        $(document).on("click", "#btnFilter_CCA", function () {
+            currentPage = 1;
+            loadProductDataList_CCA();
+        });
+
+        function loadProductDataList_CCA() {
+            let payload = {
+                chassisNo: $("#txtChassisNo_CCA").val(),
+                shipId: $("#ddlShip_CCA").val(),
+                terminalId: $("#ddlTerminal_CCA").val(),
+                carStatus: $("#ddlFound_CCA").val(),
+                pageIndex: currentPage,
+                pageSize: pageSize
+            };
+            $.ajax({
+                url: "/Product/GetFoundCars",
+                type: "GET",
+                data: payload,
+                success: function (res) {
+                    if (res.status === 1) {
+                        productData_CCA = res.data || [];
+                        filteredProductData_CCA = productData_CCA;
+
+                        totalCount = 0, portId = 0, $("#hdnProductEncId").val("0");
+                        if (filteredProductData_CCA.length > 0) {
+                            totalCount = filteredProductData_CCA[0].totalRows;
+                            portId = filteredProductData_CCA[0].portId;
+                            $("#hdnProductEncId").val(filteredProductData_CCA[0].encID);
+                        }
+                       
+                        renderTable();
+                        renderPageInfo();
+                    }
+                }
+            });
+        }
+
+        /* ==============================
+           TABLE RENDER
+        ================================*/
+        function renderTable() {
+            let tbody = "";
+            $.each(filteredProductData_CCA, function (i, row) {
+                let isFound = row.isAvailable ? 1 : 0;
+                let btnClass = row.isAvailable ? "btn-success" : "btn-danger";
+                let iconClass = row.isAvailable ? "ti ti-circle-check" : "ti ti-xbox-x";
+                let btnText = row.isAvailable ? "Yes" : "No";
+
+                tbody += `
+                                        <tr>
+                                                <td>${((currentPage - 1) * pageSize) + i + 1}</td>
+                                                <td>${row.chassisNo}</td>
+                                                <td>${row.modelName}</td>
+                                                <td>${row.oTerminalName}</td>
+                                                <td>${row.aTerminalName}</td>
+                                                <td>${row.shipName}</td>
+                                                <td>${row.foundBy}</td>
+                                                <td>${row.foundAt}</td>
+                                                <td>
+                                                    <button class="btn btn-xs ${btnClass} btnToggleFoundStatus d-flex align-items-center gap-1 justify-content-center"
+                                                    data-id="${row.encID}"
+                                                    data-isfound="${isFound}">
+                                                    <i class="${iconClass}"></i> ${btnText}
+                                                    </button>
+                                                </td>
+                                        </tr>`;
+            });
+
+            $("#ProductTable_CCA tbody").html(tbody);
+            renderPagination();
+        }
+
+        /* ==============================
+           PAGINATION
+        ================================*/
+        function renderPagination() {
+            let totalPages = Math.ceil(totalCount / pageSize);
+            let html = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<li class="page-item">
+                                    <button class="page-link ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>
+                                </li>`;
+            }
+
+            $("#pagination").html(html);
+        }
+
+        $(document).on("click", ".page-link", function () {
+            currentPage = parseInt($(this).data("page"));
+            loadProductDataList_CCA();
+        });
+
+        function renderPageInfo() {
+            let total = totalCount;
+            let start = (currentPage - 1) * pageSize + 1;
+            let end = currentPage * pageSize;
+            if (end > total) end = total;
+            let chassisNo = $("#txtChassisNo_CCA").val().trim();
+            toggleControls(false);
+
+            if (total === 0) {
+                $("#lblpagedescription").html(`
+                                            <span class="text-danger">
+                                                <i class="ti ti-info-circle"></i>
+                                                No data found
+                                            </span>`);
+                return;
+            }
+            if (chassisNo.length > 0 && total === 1) {
+                toggleControls(true);
+            }
+
+            $("#lblpagedescription").text(`Showing ${start} to ${end} of ${total} entries`);
+        }
+        function toggleControls(show = false) {
+
+            if (show) {
+                $("#divControls").show();
+                if (parseInt(portId) > 0) {
+                    bindDropdown("TERMINAL", "#ddlTerminal1_CCA", portId);
+                }
+            }
+            else {
+                $("#divControls").hide();
+                $("#ddlTerminal1_CCA").val("0").trigger("chosen:updated");
+            }
+            $(ddlTerminal1_CCA).removeClass("input-error");
+        }
+        $(document).on("click", "#btnCancel_CCA", function () {
+            toggleControls(false);
+        });
+
+        $(document).on("click", "#btnUpdateTerminal_CCA", function () {
+            if (!validateRequired_Borderd("ddlTerminal1_CCA", ["-1"], "Please select a Terminal !")) return false;
+
+            let _encID = $("#hdnProductEncId").val();
+            let terminalId = $("#ddlTerminal1_CCA").val();
+            let payload = {
+                encId: _encID,
+                referenceId: parseInt(terminalId)
+            };
+
+            $("#btnUpdateTerminal_CCA").prop("disabled", true).text("Processing...");
+
+            $.ajax({
+                url: "/ProductAdditionalInfo/AssignTerminalToProduct",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+
+                success: function (res) {
+                    let type = res.status === 1 ? "success" : res.status === 2 ? "warning" : "error";
+                    let title = res.status === 1 ? "Success" : res.status === 2 ? "Already Exists" : "Error";
+
+                    ShowToast(type, title, res.message);
+
+                    if (res.status === 1) {
+                        loadProductDataList_CCA();
+                    }
+                },
+
+                error: function () {
+                    ShowToast("danger", "Error", "Server error occurred!");
+                },
+
+                complete: function () {
+                    $("#btnUpdateTerminal_CCA").prop("disabled", false).text("Update Terminal");
+                }
+            });
+        });
+        $(document).on("click", "#btnClear_CCA", function () {
+            $("#txtChassisNo_CCA").val("");
+            $("#ddlShip_CCA").val("0").trigger("chosen:updated");
+            $("#ddlTerminal_CCA").val("0").trigger("chosen:updated");
+            $("#ddlFound_CCA").val("-1").trigger("chosen:updated");
+        });
+        $(document).on("input change", "#ddlTerminal1_CCA", function () {
+            $(this).removeClass("input-error");
+        });
+        $(document).on("click", ".btnToggleFoundStatus", function () {
+            let button = $(this);
+            let encID = button.data("id");
+            let isFound = parseInt(button.data("isfound"));
+
+            let newStatus = isFound === 1 ? 0 : 1;
+            let actionText = newStatus === 1
+                ? "Do you want to mark this car as FOUND ?"
+                : "Do you want to mark this car as NOT FOUND ?";
+
+            ShowConfirmToast(actionText,
+                () => { markFoundOrNotFound(encID, newStatus, button); }
+            );
+
+
+        });
+        function markFoundOrNotFound(encID, newStatus, button) {
+            let payload = {
+                encId: encID,
+                referenceId: parseInt(newStatus)
+            };
+            let originalHtml = button.html(); 
+            setButtonState(button, true, "Saving...");
+            $.ajax({
+                url: "/ProductAdditionalInfo/MarkProductFoundOrNotFound",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+                success: function (res) {
+
+                    let type = res.status === 1 ? "success" : res.status === -1 ? "warning" : "error";
+                    let title = res.status === 1 ? "Deleted!" : res.status === -1 ? "Not Found!" : "Failed!";
+
+                    ShowToast(type, title, res.message);
+
+                    if (res.status === 1) {
+                        loadProductDataList_CCA();
+                    }
+                },
+                error: function () {
+
+                    ShowToast("error", "Error", "Server error occurred!");
+                },
+
+                complete: function () {
+                    setButtonState(button, false);
+                }
+            });
+        };
+
+    </script>
+}

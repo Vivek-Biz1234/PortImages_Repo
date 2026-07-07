@@ -1,0 +1,220 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0" id="lblProductHeader">Add Product's Additional Info</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span id="spnProduct">Add Product's Additional Info</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="card">
+                <input type="hidden" id="hdnProductEncId" />
+                <div class="card-header">
+                    <a href="/Product/ViewProducts" class="btn btn-md btn-primary float-end"><i class="ti ti-eye"></i>View Products</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Client</label>
+                                <select class="form-select form-control" id="ddlClient_PM" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div> 
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Ship</label>
+                                <select class="form-select form-control" id="ddlShip_PM" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Model</label>
+                                <select class="form-select form-control" id="ddlModel_PM" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Inventory Status</label>
+                                <select class="form-select form-control" id="ddlInventoryStatus_PM" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Vehicle's Status(Condition)</label>
+                                <select class="form-select form-control" id="ddlVehicleStatus_PM" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">INS Organization</label>
+                                <select class="form-select form-control" id="ddlINSOrganization_PM" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">INS Destination</label>
+                                <select class="form-select form-control" id="ddlINSDestination_PM" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">INS Status</label>
+                                <select class="form-select form-control" id="ddlINSStatus_PM" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Inner Cargo</label>
+                                <select class="form-select form-control" id="ddlInnerCargo_PM" aria-label="Floating label select example">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Chassis No.</label>
+                                <input type="text" class="form-control" id="txtChassisNo_PM" placeholder="Chassis No.">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">NFC No.</label>
+                                <input type="text" class="form-control" id="txtNFCNo_PM" placeholder="NFC No.">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">REF No.</label>
+                                <input type="text" class="form-control" id="txtREFNo_PM" placeholder="REF No.">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Container No.</label>
+                                <input type="text" class="form-control" id="txtContainerNo_PM" placeholder="Container No.">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Voyage No.</label>
+                                <input type="text" class="form-control" id="txtVoyageNo_PM" placeholder="Voyage No.">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Yard-In No.</label>
+                                <input type="text" class="form-control" id="txtYardInNo_PM" placeholder="Yard-In No.">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Yard-In Place</label>
+                                <input type="text" class="form-control" id="txtYardInPlace_PM" placeholder="Yard-In Place">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Yard-In Date</label>
+                                <input type="date" class="form-control" id="txtYardInDate_PM" placeholder="Yard-In Date">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Yard-Out Date</label>
+                                <input type="date" class="form-control" id="txtYardOutDate_PM" placeholder="Yard-Out Date">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Scheduled Shipping Date</label>
+                                <input type="date" class="form-control" id="txtScheduledShippingDate_PM" placeholder="Scheduled Shipping Date">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Shipping Date</label>
+                                <input type="date" class="form-control" id="txtShippingDate_PM" placeholder="Shipping Date">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">INS Date</label>
+                                <input type="date" class="form-control" id="txtINSDate_PM" placeholder="INS Date">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Mileage</label>
+                                <input type="text" class="form-control" id="txtMileage_PM" placeholder="Mileage">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Location</label>
+                                <input type="text" class="form-control" id="txtLocation_PM" placeholder="Location">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Reason Failure</label>
+                                <input type="text" class="form-control" id="txtReasonFailure_PM" placeholder="Reason Failure">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Storage Period(Days)</label>
+                                <input type="text" class="form-control" id="txtStoragePeriod_PM" placeholder="Storage Period">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label class="label">Notes</label>
+                                <textarea class="form-control" id="txtNotes_PM" rows="1" placeholder="Notes"></textarea>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+                <div class="card-footer d-flex gap-2 justify-content-end">
+                    <button type="button" class="btn btn-md btn-danger fw-normal text-white" id="btnClearProduct">Clear</button>
+                    <button type="button" class="btn btn-md btn-primary fw-normal text-white" id="btnAddProduct">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add New Task -->
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script src="~/js/common/helper.js"></script>
+    <script src="~/js/master/product-master.js"></script>
+}

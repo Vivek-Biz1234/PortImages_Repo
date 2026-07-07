@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Port Images" name="description">
+    <meta content="Port Images" name="keywords">
+    <meta content="Port Images" name="author">
+    <link href="~/images/favicon.png" rel="icon" type="image/x-icon">
+
+    <title>Port Images</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- tabler icons-->
+    <link href="~/css/tabler-icons.css" rel="stylesheet" type="text/css">
+    <!-- Bootstrap css-->
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <!-- App css-->
+    <link href="~/css/style.css" rel="stylesheet" type="text/css">
+    <link href="~/css/toast.css" rel="stylesheet" />
+    <link href="~/css/chosen.min.css" rel="stylesheet" />
+</head>
+
+<body class="body-bg">
+
+    <!-- Start Sidebar Area -->
+    <div class="sidebar-area" id="sidebar-area">
+        <div class="logo position-relative d-flex align-items-center justify-content-between">
+            <a href="~/Admin/Dashboard" class="d-block text-decoration-none position-relative">
+                <img src="~/images/logo.png" alt="logo">
+                <span class="logo-text text-secondary fw-semibold">Port Images</span>
+            </a>
+            <button class="sidebar-burger-menu-close bg-transparent py-3 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y" id="sidebar-burger-menu-close">
+                <i class="ti ti-x"></i>
+            </button>
+        </div>
+
+        <aside id="layout-menu" class="layout-menu menu-vertical menu active" data-simplebar>
+            <ul class="menu-inner">
+                <li class="menu-title small text-uppercase">
+                    <span class="menu-title-text">MAIN</span>
+                </li>
+                @* <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="ti ti-layout-dashboard menu-icon"></i>
+                <span class="title">Terminal Master</span>
+                </a>
+                <ul class="menu-sub">
+                <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link">Inbox</a>
+                </li>
+                <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link">Compose</a>
+                </li>
+                <li class="menu-item">
+                <a href="javascript:void(0);" class="menu-link">Read</a>
+                </li>
+                </ul>
+                </li> *@
+            </ul>
+        </aside>
+    </div>
+    <!-- End Sidebar Area -->
+    <!-- Start Main Content Area -->
+    <div class="container-fluid">
+        <div class="main-content d-flex flex-column">
+            <!-- Start Header Area -->
+            <header class="header-area" id="header-area">
+                <div class="row align-items-center">
+                    <div class="col-md-6 col-4">
+                        <button class="sidebar-burger-menu bg-transparent p-0 border-0" id="sidebar-burger-menu">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#15264b" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-menu-2">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M4 6l16 0" />
+                                <path d="M4 12l16 0" />
+                                <path d="M4 18l16 0" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="col-md-6 col-8">
+                        <div class="right-header-content">
+                            <ul class="d-flex justify-content-end align-items-center gap-3">
+                                <li class="header-right-item">
+                                    <div class="toggle-container">
+                                        <button class="theme-btn light" onclick="setTheme('light')" title="Light mode" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Light Mode">
+                                            <i class="ti ti-sun"></i>
+                                        </button>
+                                        <button class="theme-btn dark" onclick="setTheme('dark')" title="Dark mode" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Dark Mode">
+                                            <i class="ti ti-moon"></i>
+                                        </button>
+                                    </div>
+                                </li>
+                                <li class="header-right-item">
+                                    <div class="dropdown admin-profile">
+                                        <div class="d-xxl-flex align-items-center bg-transparent border-0 text-start p-0 cursor dropdown-toggle" data-bs-toggle="dropdown">
+                                            <div class="flex-shrink-0 position-relative">
+                                                <img class="admin-img" src="@User.FindFirst("ProfileImage")?.Value" alt="admin">
+                                            </div>
+                                        </div>
+                                        <div class="dropdown-menu border-0 bg-white dropdown-menu-end">
+                                            <div class="d-flex align-items-center info">
+                                                <div class="flex-shrink-0">
+                                                    <img class="admin-img" src="@User.FindFirst("ProfileImage")?.Value" alt="admin">
+                                                </div>
+                                                <div class="flex-grow-1 ms-2">
+                                                    <h3 class="fw-medium fs-6 mb-0">
+                                                        @User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value
+                                                    </h3>
+                                                    <span class="fs-6 fw-medium">
+                                                        @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <ul class="admin-link mb-0 list-unstyled">
+                                                <li>
+                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Employee/MyProfile">
+                                                        <i class="ti ti-user"></i>
+                                                        <span class="ms-2">My Profile</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Employee/ChangePassword">
+                                                        <i class="ti ti-lock-open"></i>
+                                                        <span class="ms-2">Change Password</span>
+                                                    </a>
+                                                </li>
+                                                @* <li>
+                                                <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="javascript:void(0);">
+                                                <i class="ti ti-settings">settings</i>
+                                                <span class="ms-2">Settings</span>
+                                                </a>
+                                                </li> *@
+                                                <li>
+                                                    <form method="post" action="/StaffLogout" class="d-inline">
+                                                        <button type="submit" class="dropdown-item admin-item-link d-flex align-items-center text-body">
+                                                            <i class="ti ti-logout"></i>
+                                                            <span class="ms-2">Logout</span>
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- End Header Area -->
+            @RenderBody()
+        </div>
+    </div>
+    <!-- End Main Content Area -->
+    <!-- latest jquery-->
+    <script src="~/js/jquery-3.6.3.min.js"></script>
+    <!-- Bootstrap js-->
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <!-- sidebar menu -->
+    <script src="~/js/sidebar-menu.js"></script>
+    <!-- custom js -->
+    <script src="~/js/custom.js"></script>
+    <script src="~/js/validation.js"></script>
+    <script src="~/js/toast.js"></script>
+    <script src="~/js/chosen.jquery.min.js"></script>
+    <script>
+        // function ActivateSidebarMenu() {
+        //     let currentUrl = window.location.pathname.toLowerCase();
+
+        //     // Remove old active items
+        //     $(".menu-item").removeClass("active open");
+        //     $(".menu-link").removeClass("active");
+
+        //     // Match the correct link
+        //     $(".menu-link").each(function () {
+        //         let linkUrl = $(this).attr("href");
+
+        //         if (linkUrl && linkUrl.toLowerCase() === currentUrl) {
+
+        //             // Add active class to clicked link
+        //             $(this).addClass("active");
+
+        //             // Add active to li
+        //             $(this).closest(".menu-item").addClass("active");
+
+        //             // Expand parent menu
+        //             $(this).closest(".menu-sub").show()
+        //             $(this).closest(".menu-item")
+        //                 .parent()
+        //                 .closest(".menu-item")
+        //                 .addClass("open active")
+        //                 .find(".menu-link.menu-toggle")
+        //                 .addClass("active");
+        //         }
+        //     });
+        // }
+        $(document).ready(function () {            
+            $("#layout-menu").load("/Admin/LoadMenu");
+            $(document).on("click", ".menu-link", function () {
+                // ActivateSidebarMenu();
+            });
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

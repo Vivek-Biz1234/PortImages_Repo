@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Auth\Commands\**" />
+    <EmbeddedResource Remove="Auth\Commands\**" />
+    <None Remove="Auth\Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+    <PackageReference Include="MediatR" Version="13.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PORTIMAGES.Common\PORTIMAGES.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\Interfaces\Excel\" />
+  </ItemGroup>
+
+</Project>

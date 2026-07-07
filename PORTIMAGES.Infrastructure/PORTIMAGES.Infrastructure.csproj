@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="EPPlus" Version="8.5.4" />
+    <PackageReference Include="ExcelDataReader" Version="3.8.0" />
+    <PackageReference Include="ExcelDataReader.DataSet" Version="3.8.0" />
+    <PackageReference Include="MediatR" Version="13.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PORTIMAGES.Application\PORTIMAGES.Application.csproj" />
+  </ItemGroup>
+
+</Project>

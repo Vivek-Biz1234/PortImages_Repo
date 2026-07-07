@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11709.129 insiders
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PORTIMAGES.Web", "PORTIMAGES.Web\PORTIMAGES.Web.csproj", "{92B891EF-EC92-4FB4-A1AC-386753BA75C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PORTIMAGES.Application", "PORTIMAGES.Application\PORTIMAGES.Application.csproj", "{85657DED-B35B-460E-8FF0-591EB8A45C0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PORTIMAGES.Common", "PORTIMAGES.Common\PORTIMAGES.Common.csproj", "{05DC6109-431F-437F-9CE8-3AFA1A31F7EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PORTIMAGES.Domain", "PORTIMAGES.Domain\PORTIMAGES.Domain.csproj", "{CEBBA125-41B9-4607-B82A-BC16159A936F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PORTIMAGES.Infrastructure", "PORTIMAGES.Infrastructure\PORTIMAGES.Infrastructure.csproj", "{AA9B5386-DFEA-433C-B7EA-1153BC6A0AA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PORTIMAGES.IntegrationService", "PORTIMAGES.IntegrationService\PORTIMAGES.IntegrationService.csproj", "{7888DFAB-8E77-4123-BEB0-CD38A103061A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92B891EF-EC92-4FB4-A1AC-386753BA75C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92B891EF-EC92-4FB4-A1AC-386753BA75C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92B891EF-EC92-4FB4-A1AC-386753BA75C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92B891EF-EC92-4FB4-A1AC-386753BA75C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85657DED-B35B-460E-8FF0-591EB8A45C0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85657DED-B35B-460E-8FF0-591EB8A45C0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85657DED-B35B-460E-8FF0-591EB8A45C0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85657DED-B35B-460E-8FF0-591EB8A45C0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05DC6109-431F-437F-9CE8-3AFA1A31F7EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05DC6109-431F-437F-9CE8-3AFA1A31F7EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05DC6109-431F-437F-9CE8-3AFA1A31F7EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05DC6109-431F-437F-9CE8-3AFA1A31F7EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEBBA125-41B9-4607-B82A-BC16159A936F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEBBA125-41B9-4607-B82A-BC16159A936F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEBBA125-41B9-4607-B82A-BC16159A936F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEBBA125-41B9-4607-B82A-BC16159A936F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA9B5386-DFEA-433C-B7EA-1153BC6A0AA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA9B5386-DFEA-433C-B7EA-1153BC6A0AA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA9B5386-DFEA-433C-B7EA-1153BC6A0AA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA9B5386-DFEA-433C-B7EA-1153BC6A0AA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7888DFAB-8E77-4123-BEB0-CD38A103061A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7888DFAB-8E77-4123-BEB0-CD38A103061A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7888DFAB-8E77-4123-BEB0-CD38A103061A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7888DFAB-8E77-4123-BEB0-CD38A103061A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0D7D38C4-0CB6-40BF-9EBE-D8F318E1FEDB}
+	EndGlobalSection
+EndGlobal

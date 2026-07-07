@@ -1,0 +1,33 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build Results
+bin/
+obj/
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Test Results
+TestResults/
+
+# Logs
+*.log
+
+# OS Files
+Thumbs.db
+Desktop.ini
+
+# ASP.NET Core Development Settings
+appsettings.Development.json
+
+# Temporary files
+Temp.txt
+*.ipynb

@@ -1,0 +1,286 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">Upload Image</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span>Upload Image</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+
+            <div class="card">
+                <input type="hidden" id="hdnProductEncId_UI" />
+                <div class="card-header">
+                    <a href="/Product/ViewProducts" class="btn btn-sm btn-primary float-end"><i class="ti ti-eye"></i>View Products</a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Chassis No</label>
+                                <input type="text" id="txtChassisNo" class="form-control" placeholder="Chassis No">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Image Upload</label>
+                                <input type="file" class="form-control" id="ImageFile" multiple accept="image/*" />
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="label">Component Name</label>
+                                <input type="text" id="txtComponentName" class="form-control" placeholder="Component name like tyres..">
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="mb-3">
+                                <label class="label">Component Weight</label>
+                                <input type="text" id="txtComponentWeight" class="form-control only-number" placeholder="Component Weight">
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="mb-3">
+                                <label class="label">Unit</label>
+                                @* <input type="text" id="txtWeightUnit" class="form-control" placeholder="Unit"> *@
+                                <select class="form-select form-control" id="ddlWeightUnit" aria-label="Floating label select example">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 mt-4">
+                            <button type="button" class="btn btn-sm btn-primary fw-normal text-white" id="btnAdd">Submit</button>
+                        </div>
+                        <div class="row mt-3" id="imagePreview">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script src="~/js/common/helper.js"></script>
+    <script>
+
+        const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+        const maxSize = 1 * 1024 * 1024;
+        let validFiles = [];
+
+        $(document).ready(function () {
+            const encId = getQueryString("_pid");
+            if (encId) {
+                $("#hdnProductEncId_UI").val(encId);
+                bindDropdowns();
+                loadProductForEdit(encId);
+                loadSavedImages(encId);
+                loadInnerDetails(encId);
+            }
+        });
+
+        function bindDropdowns() {
+            bindDropdown("WEIGHTUNIT", "#ddlWeightUnit");
+        }
+
+
+        function loadProductForEdit(encId) {
+            $.get("/Product/GetProductByEncId", { pid: encId }, function (res) {
+                if (res.status !== 1) {
+                    ShowToast("error", "Error", res.message);
+                    return;
+                }
+                const d = res.data;
+                $("#txtChassisNo").val(d.chassisNo);
+            });
+        }
+
+        $(document).on("click", "#btnAdd", function () {
+
+            if (validFiles.length === 0 && ($("#txtComponentName").val().trim() ==="")) {
+                ShowToast("warning", "Validation", "Please select valid images");
+                return;
+            }
+
+            let formData = new FormData();
+            let encId = $("#hdnProductEncId_UI").val();
+
+            formData.append("encId", encId);
+            formData.append("ComponentName", $("#txtComponentName").val());
+            formData.append("ComponentWeight", $("#txtComponentWeight").val());
+            formData.append("WeightUnit", $("#ddlWeightUnit").val());
+
+            validFiles.forEach(f => {
+                formData.append("Pimages", f);
+            });
+
+            $.ajax({
+                url: "/Product/AddProductImage",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (resp) {
+
+                    if (resp.status === 1) {
+                         validFiles = [];
+                        // $("#imagePreview .local").remove();
+                        // loadSavedImages(encId);
+
+                        resetFileControl();
+                        loadSavedImages(encId);
+                    }
+
+                    let type = resp.status === 1 ? "success" :
+                        resp.status === 2 ? "warning" : "error";
+
+                    let title = resp.status === 1 ? "Success" :
+                        resp.status === 2 ? "Already Exists" : "Error";
+
+                    ShowToast(type, title, resp.message);
+                }
+            });
+        });
+
+
+        $("#ImageFile").on("change", function () {
+
+            validFiles = [];
+            $("#imagePreview .local").remove();
+
+            const files = this.files;
+
+            Array.from(files).forEach((file) => {
+
+                if (!allowedTypes.includes(file.type)) {
+                    ShowToast("warning", "Invalid File", file.name + " is not allowed");
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    ShowToast("warning", "File Too Large", file.name + " exceeds 1 MB");
+                    return;
+                }
+
+                validFiles.push(file);
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#imagePreview").append(`
+                                                <div class="col-md-3 mb-3 image-item local">
+                                                    <div class="file-card">
+                                                        <img src="${e.target.result}" class="file-preview" />
+                                                        <div class="file-actions">
+                                                            <button class="file-action delete local" type="button">
+                                                                        <i class="ti ti-trash text-danger"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `);
+                };
+                reader.readAsDataURL(file);
+            });
+            this.value = "";
+        });
+
+        function loadSavedImages(encId) {
+            $("#imagePreview").html("");
+
+            $.get("/Product/GetProductImages", { pid: encId }, function (res) {
+                if (res.status !== 1) return;
+
+                res.data.forEach(img => {
+                    $("#imagePreview").append(`
+                        <div class="col-md-3 mb-3 image-item saved" data-id="${img.imageId}">
+                            <label class="file-card">
+                                <input type="checkbox" class="custom-checkbox">
+                                <img src="${img.imagePath}" class="file-preview" />
+
+                                <div class="file-status">
+                                    <div class="status-icon status-success">✓</div>
+                                </div>
+
+                                <div class="file-actions">
+                                    <button class="file-action delete saved"
+                                            type="button"
+                                            data-id="${img.imageId}">
+                                                <i class="ti ti-trash text-danger"></i>
+                                    </button>
+                                </div>
+                            </label>
+                        </div>
+                    `);
+                });
+            });
+        }
+
+        $(document).on("click", ".delete.local", function () {
+
+            const index = $(this).closest(".image-item").index(".image-item.local");
+
+            validFiles.splice(index, 1);
+            $(this).closest(".image-item").remove();
+            $("#ImageFile").val("");
+        });
+
+
+
+        $(document).on("click", ".delete.saved", function () {
+            const btn = $(this);
+            let id = btn.data("id");
+            const encId = $("#hdnProductEncId_UI").val();
+            ShowConfirmToast("Delete this image?", () => {
+                $.post("/Product/DeleteProductImage",
+                    { Pid: id },
+                    function (res) {
+                        let type = res.status === 1 ? "success" : res.status === -1 ? "warning" : "error";
+                        let title = res.status === 1 ? "Deleted!" : res.status === -1 ? "Not Found!" : "Failed!";
+
+                        if (res.status === 1) {
+                            loadSavedImages(encId);
+                        }
+                        ShowToast(type, title, res.message);
+                    },
+                    "json"
+                );
+            });
+        });
+
+        function loadInnerDetails(encId) {  
+            $.get("/Product/GetProductInnerDetails", { pid: encId }, function (res) {
+                if (res.status !== 1) return;
+
+
+                const d = res.data[0];
+                // alert(d.componentName);
+
+                $("#txtComponentName").val(d.componentName);
+                $("#txtComponentWeight").val(d.componentWeight)
+                $("#ddlWeightUnit").val(d.weightUnit).trigger("chosen:updated");
+
+            });
+        }
+
+        function resetFileControl() {
+            $("#ImageFile").val("");
+            $("#ImageFile").data("validFiles", []);
+        }
+
+
+    </script>
+}

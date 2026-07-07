@@ -1,0 +1,70 @@
+﻿@{
+    Layout = null;
+}
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="Port Images" name="description">
+<meta content="Port Images" name="keywords">
+<meta content="Port Images" name="author">
+<link href="~/images/favicon.png" rel="icon" type="image/x-icon">
+<title>Port Images User Login</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+<!-- tabler icons-->
+<link href="~/css/tabler-icons.css" rel="stylesheet" type="text/css">
+
+<!-- Bootstrap css-->
+<link href="~/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+<!-- App css-->
+<link href="~/css/style.css" rel="stylesheet" type="text/css">
+@model PORTIMAGES.Application.Auth.AuthUser.Commands.UserLoginCommand
+<form asp-action="Login" method="post">
+    <div class="sign-in-bg">
+        <div class="app-wrapper d-block">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 p-0">
+                        <div class="login-form-container">
+                            <div class="mb-4">
+                                <a class="logo" href="javascript:void(0);">
+                                    <img alt="" src="~/images/logo.png" class="">
+                                </a>
+                            </div>
+                            <div class="form_container">
+                                <div class="app-form">
+                                    @Html.ValidationSummary(excludePropertyErrors: true, "", new { @class = "alert" })
+                                    <div class="form-group mb-3">
+                                        <label asp-for="Username" class="form-label">Email address</label>
+                                        <input asp-for="Username" class="form-control">
+                                        <span asp-validation-for="Username" class="text-error"></span>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label asp-for="Password" class="form-label">Password</label>
+                                        <input asp-for="Password" class="form-control" type="password" autocomplete="new-password">
+                                        <span asp-validation-for="Password" class="text-error"></span>
+                                    </div>
+                                    <div class="form-group mb-4 form-check text-end">
+                                        <a href="/AuthUser/Register" class="link-primary">SignUp?</a>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <button type="submit" id="btnLogin" class="btn btn-primary w-100">Login</button>
+                                    </div> 
+                                </div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- latest jquery-->
+<script src="~/js/jquery-3.6.3.min.js"></script>
+
+<!-- Bootstrap js-->
+<script src="~/js/bootstrap.bundle.min.js"></script>

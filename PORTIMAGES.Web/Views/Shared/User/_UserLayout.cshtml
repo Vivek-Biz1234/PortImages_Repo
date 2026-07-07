@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Port Images" name="description">
+    <meta content="Port Images" name="keywords">
+    <meta content="Port Images" name="author">
+    <link href="../images/favicon.png" rel="icon" type="image/x-icon">
+
+    <title>Port Images</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- tabler icons-->
+    <link href="~/css/tabler-icons.css" rel="stylesheet" />
+    <!-- Bootstrap css-->
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" type="text/css">
+    <!-- App css-->
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/toast.css" rel="stylesheet" />
+</head>
+<body class="body-bg">
+
+    <!-- Start Main Content Area -->
+    <div class="container-fluid">
+        <div class="main-content d-flex flex-column px-0">
+            <!-- Start Header Area -->
+            <header class="header-area mt-3" id="header-area">
+                <div class="row align-items-center">
+                    <div class="col-md-4 col-6">
+                        <div class="logo position-relative d-flex align-items-center justify-content-between">
+                            <a href="~/User/MyProduct" class="d-block text-decoration-none position-relative">
+                                <img src="../images/logo.png" alt="logo">
+                                <span class="logo-text text-secondary fw-semibold">Port Images</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-6">
+                        <div class="right-header-content">
+                            <ul class="d-flex justify-content-end align-items-center gap-3">
+                                <li class="header-right-item">
+                                    <button type="button" class="btn btn-sm btn-default" data-bs-toggle="modal" data-bs-target="#inquiry">Inquiry</button>
+                                </li>
+                                <li class="header-right-item">
+                                    <button type="button" class="btn btn-sm btn-default">日本語ガイド</button>
+                                </li>
+                                <li class="header-right-item">
+                                    <button type="button" class="btn btn-sm btn-default">Startup Guide</button>
+                                </li>
+                                <li class="header-right-item">
+                                    <button type="button" class="btn btn-sm btn-default">利用規約</button>
+                                </li>
+                                <li class="header-right-item">
+                                    <button type="button" class="btn btn-sm btn-default">Terms of Use</button>
+                                </li>
+                                <li class="header-right-item"> 
+                                    <a class="btn btn-sm btn-default" href="/User/VehicleImport"><i class="ti ti-file-import"></i>Import Data</a>
+                                </li>
+                                <li class="header-right-item">
+                                    <div class="toggle-container">
+                                        <button class="theme-btn light" onclick="setTheme('light')" title="Light mode" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Light Mode">
+                                            <i class="ti ti-sun"></i>
+                                        </button>
+                                        <button class="theme-btn dark" onclick="setTheme('dark')" title="Dark mode" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Dark Mode">
+                                            <i class="ti ti-moon"></i>
+                                        </button>
+                                    </div>
+                                </li>
+                                <li class="header-right-item">
+                                    <div class="dropdown admin-profile">
+                                        <div class="d-xxl-flex align-items-center bg-transparent border-0 text-start p-0 cursor dropdown-toggle" data-bs-toggle="dropdown">
+                                            <div class="flex-shrink-0 position-relative">
+                                                <img class="admin-img" src="../images/user.png" alt="admin">
+                                            </div>
+                                        </div>
+                                        <div class="dropdown-menu border-0 bg-white dropdown-menu-end">
+                                            <div class="d-flex align-items-center info">
+                                                <div class="flex-shrink-0">
+                                                    <img class="admin-img" src="../images/user.png" alt="admin">
+                                                </div>
+                                                <div class="flex-grow-1 ms-2">
+                                                    <h3 class="fw-medium fs-6 mb-0">
+                                                        @User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value
+                                                    </h3>
+                                                    <span class="fs-6 fw-medium">
+                                                        @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <ul class="admin-link mb-0 list-unstyled">
+                                                <li>
+                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="javascript:void(0);">
+                                                        <i class="ti ti-user">person</i>
+                                                        <span class="ms-2">My Profile</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="javascript:void(0);">
+                                                        <i class="ti ti-settings">settings</i>
+                                                        <span class="ms-2">Settings</span>
+                                                    </a>
+                                                </li>
+                                               @*  <li>
+                                                    <a class="dropdown-item admin-item-link d-flex align-items-center text-body" href="/Logout">
+                                                        <i class="ti ti-logout">logout</i>
+                                                        <span class="ms-2">Logout</span>
+                                                    </a>
+                                                </li>  *@
+                                                
+                                                <li class="d-block">
+                                                    <form method="post" action="/Logout" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="dropdown-item admin-item-link d-flex align-items-center text-body">
+                                                            <i class="ti ti-logout">logout</i>
+                                                            <span class="ms-2">Logout</span>
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- End Header Area -->
+            @RenderBody()
+        </div>
+    </div>
+    <!-- End Main Content Area -->
+
+    <div class="modal fade" id="inquiry" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-slideout" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mb-0" id="exampleModalLabel">Inquiry Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="ti ti-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body p-3">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="label">Company</label>
+                                <input type="text" class="form-control" id="txtcompany" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="label">Name</label>
+                                <input type="text" class="form-control" id="txtname" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="label">Email</label>
+                                <input type="text" class="form-control" id="txtemail" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="label">Phone</label>
+                                <input type="text" class="form-control only-number" id="txtmobile" data-maxlength="10" placeholder="Phone">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="label">Description</label>
+                                <textarea class="form-control" id="txtdescription"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer p-3">
+                    <button type="button" class="btn btn-md btn-danger fw-normal text-white" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-md btn-primary fw-normal text-white" id="btnAddInq">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- latest jquery-->
+    <script src="~/js/jquery-3.6.3.min.js"></script>
+    <!-- Bootstrap js-->
+    <script src="~/js/bootstrap.bundle.min.js"></script>
+    <!-- sidebar menu -->
+    <script src="~/js/sidebar-menu.js"></script>
+    <!-- data table -->
+    @* <script src="~/js/data-table.js"></script> *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <!-- custom js -->    
+    <script src="~/js/validation.js"></script>
+    <script src="~/js/toast.js"></script>
+    <script src="~/js/user/inquiry.js"></script>
+    <script src="~/js/custom.js"></script>
+    @RenderSection("Scripts", required: false)
+   
+</body>
+</html>

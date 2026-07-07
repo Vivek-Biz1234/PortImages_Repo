@@ -1,0 +1,349 @@
+﻿@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">View Products</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span>Assign Menu Permissions</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="table-card">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3">
+                    <form class="table-src-form position-relative m-0">
+                        <input type="text" id="txtSearchProduct" class="form-control" placeholder="Search here...">
+                        <div class="src-btn">
+                            <span class="ti ti-search">search</span>
+                        </div>
+                    </form>
+                    <span id="empName">EmpName</span>
+                    <span id="empEmail">Email</span>
+                    <span id="empMobile">Contact</span>
+                    <button class="btn btn-sm btn-primary" id="btnSavePermissions"><i class="ti ti-circle-check"></i> Save Permissions</button> 
+                </div>
+                <div class="table-responsive table-responsive-xxl">
+                    <table id="ProductTable" class="table align-middle w-100">
+                        <thead>
+                            <tr> 
+                                <th scope="col" class="fw-medium">Sno</th>
+                                <th scope="col" class="fw-medium"> </th> 
+                                <th scope="col" class="fw-medium">SubMenu</th>
+                                <th scope="col" class="fw-medium">Assign <input type="checkbox" id="chkAssignAll" /></th>
+                                <th scope="col" class="fw-medium">View</th>
+                                <th scope="col" class="fw-medium">Add</th>
+                                <th scope="col" class="fw-medium">Edit</th>
+                                <th scope="col" class="fw-medium">Delete</th> 
+                            </tr>
+                        </thead>
+                        <tbody id="tblPermissions">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblpagedescription">Showing 1 to 10 of 50 entries</span>
+
+                    <nav class="custom-pagination" aria-label="Page navigation">
+                        <ul class="pagination mb-0 justify-content-center" id="pagination">
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+@section Scripts {
+    <script src="~/js/common/helper.js"></script>
+    <script>
+
+        /* ==============================
+           GLOBAL VARIABLES
+        ================================*/
+        let empId = 0;
+
+        let menuData = [];          // full menu list
+        let filteredMenuData = [];  // filtered menu list
+
+        let pageSize = 50;
+        let currentPage = 1;
+
+        /* ==============================
+           PAGE LOAD
+        ================================*/
+        $(document).ready(function () {
+
+            const encEmpId = getQueryString("_eid");
+
+            if (!encEmpId) {
+                ShowToast("error", "Error", "Employee Id missing");
+                return;
+            }
+
+            empId = encEmpId;
+            loadMenuPermissions();
+        });
+
+        /* ==============================
+           LOAD EMPLOYEE + MENU DATA
+        ================================*/
+        function loadMenuPermissions() {
+
+            $.ajax({
+                url: "/Menu/GetEmployeeMenuPermissions",
+                type: "GET",
+                data: { empId: empId },
+
+                success: function (res) {
+
+                    if (res.status !== 1) {
+                        ShowToast("error", "Error", res.message);
+                        return;
+                    }
+
+                    /* Employee Card */
+                    $("#empName").text(res.data.employee.fullName);
+                    $("#empEmail").text(res.data.employee.email);
+                    $("#empMobile").text(res.data.employee.mobile);
+
+                    /* Menu Data */
+                    menuData = res.data.menus || [];
+                    filteredMenuData = menuData;
+
+                    currentPage = 1;
+
+                    renderTable();
+                    renderPageInfo();
+                }
+            });
+        }
+
+        /* ==============================
+           GROUP BY MAIN MENU
+        ================================*/
+        function groupByMainMenu(data) {
+
+            let grouped = {};
+
+            data.forEach(item => {
+
+                if (!grouped[item.mainMenuId]) {
+                    grouped[item.mainMenuId] = {
+                        mainMenuName: item.mainMenuName,
+                        items: []
+                    };
+                }
+
+                grouped[item.mainMenuId].items.push(item);
+            });
+
+            return grouped;
+        }
+
+        /* ==============================
+           RENDER TABLE
+        ================================*/
+        function renderTable() {
+
+            let start = (currentPage - 1) * pageSize;
+            let end = start + pageSize;
+            let pageData = filteredMenuData.slice(start, end);
+
+            let grouped = groupByMainMenu(pageData);
+            let tbody = "";
+            let sno = start + 1;
+
+            Object.keys(grouped).forEach(mainMenuId => {
+
+                let group = grouped[mainMenuId];
+
+                /* Main Menu Header */
+                tbody += `
+                        <tr class="table-light fw-semibold">
+                            <td colspan="8">
+                                <i class="ti ti-folder me-1"></i>
+                                ${group.mainMenuName}
+                            </td>
+                        </tr>`;
+
+                /* Sub Menus */
+                group.items.forEach(r => {
+
+                    let assigned = r.isAssigned === true;
+
+                    tbody += `
+                            <tr data-submenuid="${r.subMenuId}">
+                                <td>${sno++}</td>
+                                <td></td>
+                                <td>${r.subMenuName}</td>
+
+                                <td>
+                                    <input type="checkbox" class="chkAssign" ${assigned ? 'checked' : ''}>
+                                </td>
+
+                                <td>
+                                    <input type="checkbox" class="chkView" ${assigned && r.canView ? 'checked' : ''} ${!assigned ? 'disabled' : ''}>
+                                </td>
+
+                                <td>
+                                    <input type="checkbox" class="chkAdd" ${assigned && r.canAdd ? 'checked' : ''} ${!assigned ? 'disabled' : ''}>
+                                </td>
+
+                                <td>
+                                    <input type="checkbox" class="chkEdit" ${assigned && r.canEdit ? 'checked' : ''} ${!assigned ? 'disabled' : ''}>
+                                </td>
+
+                                <td>
+                                    <input type="checkbox" class="chkDelete" ${assigned && r.canDelete ? 'checked' : ''} ${!assigned ? 'disabled' : ''}>
+                                </td>
+                            </tr>`;
+                });
+            });
+
+            $("#tblPermissions").html(tbody);
+            renderPagination();
+        }
+
+        /* ==============================
+           PAGINATION
+        ================================*/
+        function renderPagination() {
+
+            let totalPages = Math.ceil(filteredMenuData.length / pageSize);
+            let html = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+
+                html += `
+                        <li class="page-item">
+                            <button class="page-link ${i === currentPage ? 'active' : ''}"
+                                    data-page="${i}">
+                                ${i}
+                            </button>
+                        </li>`;
+            }
+
+            $("#pagination").html(html);
+        }
+
+        $(document).on("click", ".page-link", function () {
+
+            currentPage = parseInt($(this).data("page"));
+            renderTable();
+            renderPageInfo();
+        });
+
+        function renderPageInfo() {
+
+            let total = filteredMenuData.length;
+
+            if (total === 0) {
+                $("#lblpagedescription").html(
+                    `<span class="text-danger">
+                            <i class="ti ti-info-circle"></i> No data found
+                         </span>`
+                );
+                return;
+            }
+
+            let start = (currentPage - 1) * pageSize + 1;
+            let end = Math.min(currentPage * pageSize, total);
+
+            $("#lblpagedescription")
+                .text(`Showing ${start} to ${end} of ${total} entries`);
+        }
+
+        /* ==============================
+           SEARCH
+        ================================*/
+        $(document).on("keyup", "#txtSearchProduct", function () {
+
+            let value = $(this).val().toLowerCase().trim();
+
+            filteredMenuData = menuData.filter(row =>
+                Object.values(row).some(v =>
+                    String(v || "").toLowerCase().includes(value)
+                )
+            );
+
+            currentPage = 1;
+            renderTable();
+            renderPageInfo();
+        });
+
+        /* ==============================
+           ASSIGN LOGIC
+        ================================*/
+        $(document).on("change", ".chkAssign", function () {
+
+            let row = $(this).closest("tr");
+            let checked = $(this).is(":checked");
+
+            row.find(".chkView,.chkAdd,.chkEdit,.chkDelete")
+                .prop("checked", checked)
+                .prop("disabled", !checked);
+        });
+
+        $("#chkAssignAll").on("change", function () {
+
+            let checked = $(this).is(":checked");
+
+            $(".chkAssign").prop("checked", checked);
+            $(".chkView,.chkAdd,.chkEdit,.chkDelete")
+                .prop("checked", checked)
+                .prop("disabled", !checked);
+        });
+
+        /* ==============================
+           SAVE PERMISSIONS
+        ================================*/
+        $("#btnSavePermissions").click(function () {
+
+            let payload = [];
+
+            $("#tblPermissions tr").each(function () {
+
+                let row = $(this);
+                let isAssigned = row.find(".chkAssign").is(":checked");
+
+                if (!isAssigned) return;
+
+                payload.push({
+                    SubMenuId: row.data("submenuid"),
+                    CanView: row.find(".chkView").is(":checked"),
+                    CanAdd: row.find(".chkAdd").is(":checked"),
+                    CanEdit: row.find(".chkEdit").is(":checked"),
+                    CanDelete: row.find(".chkDelete").is(":checked")
+                });
+            });
+
+            $.ajax({
+                url: "/Menu/SaveEmployeeMenuPermissions?empId=" + empId,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payload),
+
+                success: function (res) {
+                    let type = res.status === 1 ? "success" : "error";
+                    ShowToast(type, "Menu Permissions", res.message);
+                }
+            });
+        });
+
+    </script>
+
+
+}
+

@@ -1,0 +1,426 @@
+﻿@using System.Security.Claims
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">Employee Master</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span>Employee Master</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="table-card">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3">
+                    <form class="table-src-form position-relative m-0">
+                        <input type="text" id="txtSearch" class="form-control" placeholder="Search here...">
+                        <div class="src-btn">
+                            <span class="ti ti-search">search</span>
+                        </div>
+                    </form>
+                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeform"><i class="ti ti-plus"></i> Add Employee</button>
+                </div>
+                <div class="table-responsive">
+                    <table id="EmployeeTable" class="table align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="fw-medium">Sno</th>
+                                <th scope="col" class="fw-medium">Employee Name</th>
+                                <th scope="col" class="fw-medium">Email</th>
+                                <th scope="col" class="fw-medium">Contact No</th>
+                                <th scope="col" class="fw-medium">Designation</th>
+                                <th scope="col" class="fw-medium">Role</th>
+                                <th scope="col" class="fw-medium">Address</th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Date of Birth">DOB</abbr></th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Date of Entry">DOE</abbr></th>
+                                <th scope="col" class="fw-medium">Created by</th>
+                                <th scope="col" class="fw-medium">Status</th>
+                                <th scope="col" class="fw-medium">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblpagedescription">Showing 1 to 10 of 50 entries</span>
+                    <nav class="custom-pagination" aria-label="Page navigation">
+                        <ul class="pagination mb-0 justify-content-center" id="pagination">
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Add New Task -->
+<div class="modal fade" id="addEmployeeform" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-slideout" role="document">
+        <div class="modal-content bg-white">
+            <div class="modal-header">
+                <h5 class="modal-title mb-0" id="exampleModalLabel">Add Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+            <div class="modal-body p-3">
+                <input type="hidden" id="hdnEmployeeId" />
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="mb-3">
+                            <label class="label">Employee Name <span class="text-danger"> *</span></label>
+                            <input type="text" class="form-control" id="txtEmployeeName" placeholder="Employee Name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="label">Email<span class="text-danger"> *</span></label>
+                            <input type="text" class="form-control" id="txtEmployeeEmail" placeholder="Employee's email id">
+                        </div>
+                        <div class="mb-3">
+                            <label class="label">Contact Number<span class="text-danger"> *</span></label>
+                            <input type="text" class="form-control only-number" id="txtEmployeeContact" data-maxlength="10" placeholder="Contact Number">
+                        </div>
+                        <div class="mb-3">
+                            <label class="label">DOB<span class="text-danger"> *</span></label>
+                            <input type="date" class="form-control" id="txtEmployeeDOB" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="label">Designation <span class="text-danger"> *</span></label>
+                            <select id="ddlDesignation" class="form-select form-control"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="label">Role <span class="text-danger"> *</span></label>
+                            <select id="ddlRole" class="form-select form-control"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="label">Address<span class="text-danger"> *</span></label>
+                            <textarea class="form-control" id="txtEmployeeAddress" rows="2" placeholder="Address"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="label">Status<span class="text-danger"> *</span></label>
+                            <select class="form-select form-control" id="ddlEmployeeStatus" aria-label="Floating label select example">
+                                <option value="-1" selected>Select Staus</option>
+                                <option value="1">Active</option>
+                                <option value="0">In-Active</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer p-3">
+                <button type="button" class="btn btn-xs btn-danger fw-normal text-white" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-xs btn-primary fw-normal text-white" id="btnAdd">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+    <script>        
+                let terminalData = [];
+                let pageSize = 50;         // records per page
+                let currentPage = 1;
+                let filteredData = [];
+                $(document).ready(function () { 
+                    bindDropdown("DESIGNATION", "#ddlDesignation");
+                    bindDropdown("ROLE", "#ddlRole");
+                    LoadEmployeeList();
+                });
+
+                function LoadEmployeeList() {
+                    $.ajax({
+                        url: "/Employee/GetEmployeeList",
+                        type: "GET",
+                        success: function (res) {
+                            if (res.status === 1) {
+                                terminalData = res.data || [];
+                                filteredData = terminalData;
+                                currentPage = 1;
+                                RenderTable();
+                                renderPageInfo();
+                            }
+                        }
+                    });
+                }
+                function RenderTable() {
+
+                    let tbody = "";
+                    let start = (currentPage - 1) * pageSize;
+                    let end = start + pageSize;
+                    let pageData = filteredData.slice(start, end);
+                    $.each(pageData, function (i, row) {
+                        tbody += `
+    <tr>
+        <td>${start + i + 1}</td>
+        <td>${row.fullName}</td>
+        <td>${row.email}</td>
+        <td>${row.mobile}</td>
+        <td>${row.designationName}</td>
+        <td>${row.roleName}</td>
+        <td>${row.address}</td>
+        <td>${row.dob}</td>
+        <td>${row.createdOn}</td>
+        <td>${row.createdBy}</td>
+        <td>
+            ${row.isActive
+            ? '<span class="text-success bg-success bg-opacity-10 default-badge">Active</span>'
+            : '<span class="text-danger bg-danger bg-opacity-10 default-badge">Inactive</span>'
+            }
+        </td>
+        <td>
+            <div class="d-flex justify-content-start gap-3">
+                <button class="bg-transparent p-0 border-0 hover-text-success btnEdit" data-id="${row.id}" data-title="Edit">
+                    <i class="ti ti-pencil fs-16"></i>
+                </button>
+                <button class="bg-transparent p-0 border-0 hover-text-danger btnDelete" data-id="${row.id}" data-title="Delete">
+                    <i class="ti ti-trash fs-16">delete</i>
+                </button>
+                <a class="bg-transparent p-0 border-0 hover-text-danger" href="/Menu/AssignMenu?_eid=${row.encID}" data-id="${row.encID}" data-title="Assign Menu">
+                    <i class="ti ti-lock-access-off fs-16"></i>
+                </a>
+            </div>
+        </td>
+    </tr>
+                                                                                                    `;
+
+                    });
+                    $("#EmployeeTable tbody").html(tbody);
+                    RenderPagination();
+                }
+                function RenderPagination() {
+                    let totalPages = Math.ceil(filteredData.length / pageSize);
+                    let pageHtml = "";
+                    for (let i = 1; i <= totalPages; i++) {
+                        pageHtml += `
+    <li class="page-item">
+        <button class="page-link ${i === currentPage ? 'active' : ''} page-btn" data-page="${i}">
+            ${i}
+        </button>
+    </li>
+                                                                        `;
+            }
+            $("#pagination").html(pageHtml);
+}
+        $(document).on("click", ".page-btn", function () {
+            currentPage = parseInt($(this).data("page"));
+            RenderTable();
+            renderPageInfo();
+        });
+        function renderPageInfo() {
+            let page = parseInt(currentPage);
+            let size = parseInt(pageSize);
+            let total = filteredData.length;
+            let start = (page - 1) * size + 1;
+            let end = page * size;
+            if (end > total) { end = total };
+            if (total === 0) {
+                $("#lblpagedescription").html(`
+<span class="text-danger">
+    <i class="ti ti-info-circle"></i>
+    No data found
+</span>
+`);
+                return;
+            }
+            let desc = `Showing ${start} to ${end} of ${total} entries`;
+            $("#lblpagedescription").text(desc);
+        }
+
+        function validateContols() {
+            if (!validateRequired("txtEmployeeName", [], "Employee Name is required !")) return false;            
+            //Email
+            if (!validateEmail("txtEmployeeEmail", "Email is required!", "Enter a valid email address")) return false;
+            // Phone
+            if (!validateContactNumber("txtEmployeeContact", "Contact number is required !", "Enter a valid contact number !")) return false;
+            if (!validateRequired("txtEmployeeDOB", [], "Employee DOB is required !")) return false;            
+            if (!validateRequired("ddlDesignation", ["-1"], "Please select designation !")) return false;
+            if (!validateRequired("ddlRole", ["-1"], "Please select role !")) return false;
+            if (!validateRequired("txtEmployeeAddress", [], "Employee address is required !")) return false;
+            if (!validateRequired("ddlEmployeeStatus", ["-1"], "Please select status !")) return false;
+            return true;
+        }
+        $(document).on(
+            "input change",
+            "#txtEmployeeName,#txtEmployeeEmail,#txtEmployeeContact,#txtEmployeeDOB,#txtEmployeeAddress,#ddlEmployeeStatus,#ddlDesignation,#ddlRole",
+            function () {
+                $(this).removeClass("input-error");
+                $(this).next(".error-text").remove();
+            }
+        );
+
+        function resetEmployeeForm() {
+            //Close Modal
+            var modalEL = $("#addEmployeeform");
+            var modal = bootstrap.Modal.getInstance(modalEL);
+            if (modal) modal.hide();
+
+            //Clear Controls
+            $("#txtEmployeeName").val("");
+            $("#txtEmployeeEmail").val("");
+            $("#txtEmployeeContact").val("");
+            $("#txtEmployeeDOB").val("");
+            $("#txtEmployeeAddress").val("");
+            $("#ddlDesignation").val("-1").trigger("chosen:updated");
+            $("#ddlRole").val("-1").trigger("chosen:updated");
+            $("#ddlEmployeeStatus").val("-1");
+
+            // Clear validation errors
+            $("#txtEmployeeName,#txtEmployeeEmail,#txtEmployeeContact,#txtEmployeeDOB,#txtEmployeeAddress,#ddlEmployeeStatus,#ddlDesignation,#ddlRole").removeClass("input-error");
+            $(".error-text").remove();
+
+            //Refresh the button and modal
+            $("#btnUpdate").text("Submit").attr("id", "btnAdd");
+            $("#exampleModalLabel").text("Add Employee");
+        }
+
+        $(document).on("click", '[data-bs-target="#addEmployeeform"]', function () {
+            resetEmployeeForm();
+        });
+
+        $(document).on("click", "#btnAdd", function () {
+            if (!validateContols()) {
+                return;
+            }
+            let Status = $("#ddlEmployeeStatus").val();
+            let payLoad = {
+                fullName: $("#txtEmployeeName").val().trim(),
+                email: $("#txtEmployeeEmail").val().trim(),
+                mobile: $("#txtEmployeeContact").val().trim(),
+                dob: $("#txtEmployeeDOB").val().trim(),
+                address: $("#txtEmployeeAddress").val().trim(),
+                designationId: $("#ddlDesignation").val().trim(),
+                roleId: $("#ddlRole").val().trim(),
+                isActive: Status === "1" ? true : false,
+                createdBy: 0
+            }
+
+            $.ajax({
+                url: "/Employee/AddEmployee",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payLoad),
+                success: function (res) {
+                    let type = res.status === 1 ? "success" : (res.status === 2 || res.status === 3) ? "warning" : "error";
+                    let title = res.status === 1 ? "Success" : (res.status === 2 || res.status === 3) ? "Already Exists" : "Error";
+                    if (res.status === 1) {
+                        resetEmployeeForm();
+                        LoadEmployeeList();
+                    }
+                    ShowToast(type, title, res.message);
+                }
+            });
+        });
+
+        $(document).on("click", ".btnEdit", function () {
+            resetEmployeeForm();
+            let id = $(this).data("id");
+            $.ajax({
+                url: "/Employee/GetEmployeeById",
+                data: { ID: id },
+                success: function (res) {
+                    if (res.status === 1) {
+                        $("#exampleModalLabel").text("Edit Employee");
+                        $("#hdnEmployeeId").val(res.data.id);
+                        $("#txtEmployeeName").val(res.data.fullName);
+                        $("#txtEmployeeEmail").val(res.data.email);
+                        $("#txtEmployeeContact").val(res.data.mobile);
+                        $("#txtEmployeeDOB").val(res.data.dob);
+                        $("#txtEmployeeAddress").val(res.data.address);
+                        $("#ddlDesignation").val(res.data.designationId).trigger("chosen:updated");
+                        $("#ddlRole").val(res.data.roleId).trigger("chosen:updated");
+                        $("#ddlEmployeeStatus").val(res.data.isActive ? "1" : "0");
+                        $("#btnAdd").text("Update").attr("id", "btnUpdate");
+                        var modal = new bootstrap.Modal($("#addEmployeeform"));
+                        modal.show();
+                    }
+                    else {
+                        ShowToast("info", "Not Found", res.message);
+                    }
+                }
+            })
+        });
+
+        $(document).on("click", "#btnUpdate", function () {             
+            if (!validateContols()) {
+                return;
+            }
+            let payLoad = {
+                id: $("#hdnEmployeeId").val(),
+                fullName: $("#txtEmployeeName").val().trim(),
+                email: $("#txtEmployeeEmail").val().trim(),
+                mobile: $("#txtEmployeeContact").val().trim(),
+                dob: $("#txtEmployeeDOB").val().trim(),
+                address: $("#txtEmployeeAddress").val().trim(),
+                designationId: $("#ddlDesignation").val().trim(),
+                roleId: $("#ddlRole").val().trim(),
+                isActive: $("#ddlEmployeeStatus").val() === "1"
+            };
+            $.ajax({
+                url: "/Employee/UpdateEmployee",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(payLoad),
+                success: function (res) {
+                    let type = res.status === 1 ? "success" : (res.status === 2 || res.status === 3) ? "warning" : res.status === -1 ? "info" : "error";
+                    let title = res.status === 1 ? "Success" : (res.status === 2 || res.status === 3) ? "Already Exists" : res.status === -1 ? "Not Found" : "Error";
+                    if (res.status === 1) {
+                        resetEmployeeForm();
+                        LoadEmployeeList();
+                    }
+                    ShowToast(type, title, res.message);
+                }
+            });
+        });
+
+        $(document).on("click", ".btnDelete", function () {
+            let id = $(this).data("id");
+
+            ShowConfirmToast(
+                "Do you want to delete this record ?",
+                () => { deleteCompany(id); }
+            );
+        });
+        function deleteCompany(id) {
+            $.ajax({
+                url: "/Employee/DeleteEmployee",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ id: id }),
+                success: function (res) {
+
+                    let type = res.status === 1 ? "success" : res.status === -1 ? "warning" : "error";
+                    let title = res.status === 1 ? "Deleted!" : res.status === -1 ? "Not Found!" : "Failed!";
+
+                    ShowToast(type, title, res.message);
+
+                    if (res.status === 1) {
+                        LoadEmployeeList();
+                    }
+                }
+            });
+        };
+        $(document).on("keyup", "#txtSearch", function () {
+            let value = $(this).val().toLowerCase().trim();
+            filteredData = terminalData.filter(row =>
+                Object.values(row).some(val =>
+                    String(val).toLowerCase().includes(value)
+                )
+            );
+            currentPage = 1;
+            RenderTable();
+            renderPageInfo();
+        });
+
+    </script>
+}

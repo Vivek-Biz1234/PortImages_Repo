@@ -1,0 +1,504 @@
+﻿@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+
+
+
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">Maker Master</h5>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">
+                    Maker Master
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="table-card">
+
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 p-3">
+                    <form class="table-src-form position-relative m-0">
+                        <input type="text" id="txtSearchMaker" class="form-control" placeholder="Search here...">
+                        <div class="src-btn">
+                            <span class="ti ti-search">search</span>
+                        </div>
+                    </form>
+
+                    <button type="button" class="btn btn-md btn-primary"
+                            data-bs-toggle="modal" data-bs-target="#frmMakerMaster">
+                        <i class="ti ti-plus"></i> Add Maker
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table id="MakerTable" class="table align-middle w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="fw-medium">Sno</th>
+                                <th scope="col" class="fw-medium">Country</th>
+                                <th scope="col" class="fw-medium">Maker Name</th>
+                                <th scope="col" class="fw-medium">Logo</th>
+                                <th scope="col" class="fw-medium">Title</th>
+                                <th scope="col" class="fw-medium">Status</th>
+                                <th scope="col" class="fw-medium"><abbr data-title="Date of Entry">DOE</abbr></th>
+                                <th scope="col" class="fw-medium">Created By</th>
+                                <th scope="col" class="fw-medium">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap px-3 pb-3">
+                    <span class="fs-15" id="lblMakerPageDescription"></span>
+                    <nav class="custom-pagination">
+                        <ul class="pagination mb-0" id="MakerPagination"></ul>
+                    </nav>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================
+     MODAL
+====================== -->
+<div class="modal fade" id="frmMakerMaster" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabelMaker">Add Maker</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <i class="ti ti-x"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="hdnMakerId" value="0" />
+                <input type="hidden" id="hdnLogoSrc" />
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Country <span class="text-danger"> *</span></label>
+                            <select id="ddlMakerCountry" class="form-select form-control"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Maker Name<span class="text-danger"> *</span></label>
+                            <input type="text" id="txtMakerName" class="form-control" placeholder="Enter Maker Name" />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Status<span class="text-danger"> *</span></label>
+                            <select id="ddlMakerStatus" class="form-select form-control">
+                                <option value="-1">Select Status</option>
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Title</label>
+                            <input type="text" id="txtTitle" class="form-control" placeholder="Title" />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Keyword</label>
+                            <input type="text" id="txtKeyword" class="form-control" placeholder="Keyword" />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Canonical</label>
+                            <input type="text" id="txtCanonical" class="form-control" placeholder="Canonical URL" />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label class="label">Logo <small class="text-muted">[Allowed: png, jpg, jpeg, webp]</small></label>
+                            <input type="file"
+                                   id="fileMakerLogo"
+                                   class="form-control"
+                                   accept=".png,.jpg,.jpeg,.webp" />
+
+
+                            <!-- Preview -->
+                            <img id="imgMakerLogoPreview"
+                                 src=""
+                                 class="mt-2 d-none rounded border"
+                                 style="max-height:80px;" />
+                        </div>
+                    </div> 
+                    <div class="col-lg-8">
+                        <div class="mb-3">
+                            <label class="label">Description</label>
+                            <textarea id="txtDescription" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div> 
+                    <div class="col-lg-12">
+                        <div class="mb-3">
+                            <label class="label">Details</label>
+                            <textarea id="txtDetails" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary" id="btnMakerSave">Submit</button>
+            </div> 
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/common/dropdowns.js"></script>
+
+    <script>
+        let makerData = [];
+        let filteredMakerData = [];
+        let pageSize = 50;
+        let currentPage = 1;
+
+        /* ==============================
+           DOCUMENT READY
+        ================================*/
+        $(document).ready(function () {
+            bindDropdown("COUNTRY", "#ddlMakerCountry");
+            LoadMakerList();
+        });
+
+        /* ==============================
+           LOAD LIST
+        ================================*/
+        function LoadMakerList() {
+            $.ajax({
+                url: "/Ship/GetMakerList",
+                type: "GET",
+                success: function (res) {
+                    if (res.status === 1) {
+                        makerData = res.data || [];
+                        filteredMakerData = makerData;
+                        currentPage = 1;
+                        renderMakerTable();
+                        renderMakerPageInfo();
+                    }
+                }
+            });
+        }
+
+        /* ==============================
+           RENDER TABLE
+        ================================*/
+        function renderMakerTable() {
+            let tbody = "";
+            let start = (currentPage - 1) * pageSize;
+            let end = start + pageSize;
+            let pageData = filteredMakerData.slice(start, end);
+
+            $.each(pageData, function (i, row) {
+                tbody += `
+                                                            <tr>
+                                                                <td>${start + i + 1}</td>
+                                                                <td>${row.country}</td>
+                                                                <td>${row.makerName}</td>
+                                                                <td>${row.logo_SRC ? `<img src="${row.logo_SRC}" style="height:40px">` : "-"}</td>
+                                                                <td>${row.title ?? ''}</td>
+                                                                <td>
+                                                                ${row.isActive
+                        ? '<span class="text-success bg-success bg-opacity-10 default-badge">Active</span>'
+                        : '<span class="text-danger bg-danger bg-opacity-10 default-badge">Inactive</span>'}
+                                                                </td>
+                                                                <td>${row.createdOn}</td>
+                                                                <td>${row.createdBy}</td>
+                                                                <td>
+                                                                    <div class="d-flex gap-3">
+                                                                        <button class="btnEditMaker bg-transparent border-0"
+                                                                                data-id="${row.id}">
+                                                                            <i class="ti ti-pencil fs-16"></i>
+                                                                        </button>
+                                                                        <button class="btnDeleteMaker bg-transparent border-0"
+                                                                                data-id="${row.id}">
+                                                                            <i class="ti ti-trash fs-16"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>`;
+            });
+
+            $("#MakerTable tbody").html(tbody);
+            renderMakerPagination();
+        }
+
+        /* ==============================
+           PAGINATION
+        ================================*/
+        function renderMakerPagination() {
+            let totalPages = Math.ceil(filteredMakerData.length / pageSize);
+            let html = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+                                                            <li class="page-item">
+                                                                <button class="page-link ${i === currentPage ? 'active' : ''}"
+                                                                        data-page="${i}">
+                                                                    ${i}
+                                                                </button>
+                                                            </li>`;
+            }
+
+            $("#MakerPagination").html(html);
+        }
+
+        $(document).on("click", "#MakerPagination .page-link", function () {
+            currentPage = parseInt($(this).data("page"));
+            renderMakerTable();
+            renderMakerPageInfo();
+        });
+
+        function renderMakerPageInfo() {
+            let total = filteredMakerData.length;
+            if (total === 0) {
+                $("#lblMakerPageDescription").html(
+                    `<span class="text-danger"><i class="ti ti-info-circle"></i> No data found</span>`
+                );
+                return;
+            }
+
+            let start = (currentPage - 1) * pageSize + 1;
+            let end = Math.min(currentPage * pageSize, total);
+            $("#lblMakerPageDescription").text(`Showing ${start} to ${end} of ${total} entries`);
+        }
+
+        /* ==============================
+           SEARCH
+        ================================*/
+        $(document).on("keyup", "#txtSearchMaker", function () {
+            let value = $(this).val().toLowerCase().trim();
+            filteredMakerData = makerData.filter(row =>
+                Object.values(row).some(v =>
+                    String(v).toLowerCase().includes(value)
+                )
+            );
+            currentPage = 1;
+            renderMakerTable();
+            renderMakerPageInfo();
+        });
+
+        /* ==============================
+           VALIDATION
+        ================================*/
+        function validateMaker() {
+            if (!validateRequired("ddlMakerCountry", ["", "-1"], "Country is required")) return false;
+            if (!validateRequired("txtMakerName", ["", " "], "Maker Name is required")) return false;
+            if (!validateRequired("ddlMakerStatus", ["", "-1"], "Status is required")) return false;
+            let makerId = $("#hdnMakerId").val();
+            let fileInput = $("#fileMakerLogo")[0];
+            let file = fileInput.files[0];
+
+            // ADD MODE → Logo required
+            if (makerId === "0" || makerId === "") {
+                if (!file) {
+                    ShowToast("error", "Error", "Maker logo is required");
+                    return false;
+                }
+            }
+
+            // UPDATE MODE → Validate only if file selected
+            if (file) {
+                let allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+                let maxSizeMB = 5;
+
+                if (!allowedTypes.includes(file.type)) {
+                    ShowToast("warning", "Invalid File", "Only PNG, JPG, JPEG, WEBP allowed");
+                    return false;
+                }
+
+                if (file.size > maxSizeMB * 1024 * 1024) {
+                    ShowToast("warning", "File Too Large", "Max file size is 5 MB");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /* ==============================
+           ADD / UPDATE
+        ================================*/
+        $(document).on("click", "#btnMakerSave", function () {
+            if (!validateMaker()) return;
+            debugger;
+            let Status = $("#ddlMakerStatus").val();
+            let _ID = parseInt($("#hdnMakerId").val()) || 0;
+            let formData = new FormData();
+
+            formData.append("ID", _ID);
+            formData.append("CountryId", $("#ddlMakerCountry").val());
+            formData.append("MakerName", $("#txtMakerName").val().trim());
+            formData.append("Title", $("#txtTitle").val().trim());
+            formData.append("Keyword", $("#txtKeyword").val().trim());
+            formData.append("Description", $("#txtDescription").val().trim());
+            formData.append("Canonical", $("#txtCanonical").val().trim());
+            formData.append("Details", $("#txtDetails").val().trim());
+            formData.append("IsActive", Status === "1");
+            formData.append("Logo_SRC", $("#hdnLogoSrc").val());
+
+            let logoFile = $("#fileMakerLogo")[0].files[0];
+            if (logoFile) {
+                formData.append("Logo", logoFile);
+            }
+
+            let url = _ID == "0"
+                ? "/Ship/AddMaker"
+                : "/Ship/UpdateMaker";
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    let type =
+                        res.status === 1 ? "success" :
+                            res.status === 2 ? "warning" :
+                                res.status === -1 ? "info" : "error";
+
+                    let title =
+                        res.status === 1 ? "Success" :
+                            res.status === 2 ? "Already Exists" :
+                                res.status === -1 ? "Not Found" : "Error";
+
+                    if (res.status === 1) {
+                        resetMakerForm();
+                        LoadMakerList();
+                    }
+
+                    ShowToast(type, title, res.message);
+                }
+            });
+        });
+
+        /* ==============================
+           EDIT
+        ================================*/
+        $(document).on("click", ".btnEditMaker", function () {
+            let id = $(this).data("id");
+            $.get("/Ship/GetMakerById", { id }, function (res) {
+                if (res.status === 1) {
+                    let d = res.data;
+                    $("#hdnMakerId").val(d.id);
+                    $("#ddlMakerCountry").val(d.countryId).trigger("chosen:updated");
+                    $("#txtMakerName").val(d.makerName);
+                    $("#txtTitle").val(d.title);
+                    $("#txtKeyword").val(d.keyword);
+                    $("#txtDescription").val(d.description);
+                    $("#txtCanonical").val(d.canonical);
+                    $("#txtDetails").val(d.details);
+                    $("#ddlMakerStatus").val(d.isActive ? "1" : "0");
+                    if (d.logo_SRC) {
+                        $("#hdnLogoSrc").val(d.logo_SRC);
+                        $("#imgMakerLogoPreview")
+                            .attr("src", d.logo_SRC)
+                            .removeClass("d-none");
+                    } else {
+                        $("#imgMakerLogoPreview").addClass("d-none");
+                    }
+
+                    $("#modalLabelMaker").text("Edit Maker");
+                    $("#btnMakerSave").text("Update");
+
+                    new bootstrap.Modal("#frmMakerMaster").show();
+                }
+            });
+        });
+
+        /* ==============================
+           DELETE
+        ================================*/
+        $(document).on("click", ".btnDeleteMaker", function () {
+            let id = $(this).data("id");
+
+            ShowConfirmToast("Delete this maker?", () => {
+                $.post("/Ship/DeleteMaker", { Id: id }, function (res) {
+                    let type = res.status === 1 ? "success" : "error";
+                    let title = res.status === 1 ? "Deleted!" : "Failed!";
+                    ShowToast(type, title, res.message);
+
+                    if (res.status === 1) LoadMakerList();
+                }, "json");
+            });
+        });
+
+        /* ==============================
+        LOGO PREVIEW
+        ================================*/
+        $(document).on("change", "#fileMakerLogo", function () {
+            let file = this.files[0];
+            if (!file) return;
+
+            let allowedTypes = ["image/png", "image/jpeg", "image/webp"];
+            if (!allowedTypes.includes(file.type)) {
+                ShowToast("warning", "Invalid File", "Only image files are allowed");
+                $(this).val("");
+                return;
+            }
+
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                $("#imgMakerLogoPreview")
+                    .attr("src", e.target.result)
+                    .removeClass("d-none");
+            };
+            reader.readAsDataURL(file);
+        });
+
+        /* ==============================
+           RESET FORM
+        ================================*/
+        function resetMakerForm() {
+            $("#hdnMakerId").val(0);
+            $("#hdnLogoSrc").val("");
+            $("#frmMakerMaster input, #frmMakerMaster textarea").val("");
+            $("#frmMakerMaster select").val("-1").trigger("chosen:updated");
+            $(".error-text").remove();
+            $(".input-error").removeClass("input-error");
+            $("#fileMakerLogo").val("");
+            $("#imgMakerLogoPreview").attr("src", "").addClass("d-none");
+            $("#modalLabelMaker").text("Add Maker");
+            $("#btnMakerSave").text("Submit");
+
+            bootstrap.Modal.getInstance("#frmMakerMaster")?.hide();
+        }
+
+        $(document).on("input change", "#frmMakerMaster input, #frmMakerMaster select, #frmMakerMaster textarea", function () {
+            $(this).removeClass("input-error");
+            $(this).next(".error-text").remove();
+        });
+        $(document).on("click", '[data-bs-target="#frmMakerMaster"]', function () {
+            resetMakerForm();
+        }); 
+    </script>
+
+}

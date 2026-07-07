@@ -1,0 +1,248 @@
+﻿@using PORTIMAGES.Application.Admin.DTOs
+@{
+    Layout = "~/Views/Shared/Admin/_AdminLayout.cshtml";
+}
+@model EmployeeMasterResponseDTO
+<div class="main-content-container overflow-hidden">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-1">
+        <h5 class="mb-0">My Profile</h5>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb align-items-center mb-0 lh-1">
+                <li class="breadcrumb-item">
+                    <a href="~/Admin/Dashboard" class="d-flex align-items-center text-decoration-none">
+                        <i class="ri-home-8-line fs-15 text-primary me-1"></i>
+                        <span class="text-body fs-14 hover">Dashboard</span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <span>My Profile</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-xxl-12 col-lg-12 col-md-12 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="position-relative">
+                            <input type="hidden" id="hdnencId" value="@Model.ID" />
+                            <div class="avatar avatar-xxl rounded-circle overflow-hidden">
+                                <img src="@Model.Profile" id="imgProfile" class="img-fluid" alt="">
+                            </div>
+                            <a href="javascript:void(0);" class="avatar avatar-xxs bg-secondary rounded-circle text-white position-absolute top-0 end-0" id="btnProfileImage">
+                                <i class="ti ti-camera"></i>
+                            </a>
+                            <input type="file" id="fileProfileImage" accept="image/*" style="display:none;">
+                        </div>
+                        <div class="ms-3">
+                            <h4 class="fw-bold mb-0" id="lblName">@Model.FullName </h4>
+                            <small class="mb-2" id="lblDesignation">@Model.DesignationName</small>
+                            <div class="d-flex flex-wrap gap-1 mt-2">
+                                <span class="badge badge-sm px-2 rounded-pill text-bg-primary" id="spnRole">@Model.RoleName</span>
+                                @*<span class="badge badge-sm px-2 rounded-pill text-bg-secondary">Designer</span>
+                                <span class="badge badge-sm px-2 rounded-pill text-bg-success">Active</span> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-sm-12">
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Basic Information</h5>
+                    <button class="btn btn-white btn-sm btn-default btn-icon waves-effect" type="button" id="btnEditProfile">
+                        <i class="ti ti-pencil"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="mb-1">Full Name</span>
+                        <p class="text-dark fw-semibold mb-0" id="lblName">@Model.FullName</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="mb-1">Email</span>
+                        <p class="text-dark fw-semibold mb-0" id="lblEmail">@Model.Email</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="mb-1">Phone</span>
+                        <p class="text-dark fw-semibold mb-0" id="lblMobile">@Model.Mobile</p>
+                    </div>
+                    <div class="mb-3">
+                        <span class="mb-1">Date of Birth</span>
+                        <p class="text-dark fw-semibold mb-0" id="lblDOB">
+                            @(!string.IsNullOrEmpty(Model.DOB)
+                                ? Convert.ToDateTime(Model.DOB).ToString("dd-MMM-yyyy")
+                                : "")
+                        </p>
+                    </div>
+                    <div class="mb-2">
+                        <span class="mb-1">Register At</span>
+                        <p class="text-dark fw-semibold mb-0">
+                            @(Model.CreatedOn != null
+                                ? Convert.ToDateTime(Model.CreatedOn).ToString("dd-MMM-yyyy")
+                                : "")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 col-sm-12">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="card-title">Account Info</h5>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-control editable-field" value="@Model.FullName" id="txtMPName" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control editable-field" value="@Model.Email" id="txtMPEmail" readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone</label>
+                                        <input type="tel" class="form-control editable-field" value="@Model.Mobile" id="txtMPMobile" readonly>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Role</label>
+                                        <input type="text" class="form-control bg-light" value="@Model.RoleName" id="txtMPRole" readonly>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <label class="form-label">Address</label>
+                                        <input type="text" class="form-control editable-field" value="@Model.Address" id="txtMPAddress" readonly>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-primary btn-md waves-effect waves-light d-none" id="btnUpdateProfile">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/common/helper.js"></script>
+    <script>
+        let isEditMode=false;
+        $(document).on("click","#btnEditProfile",function(){
+            isEditMode=!isEditMode;
+            $(".editable-field").prop("readonly",!isEditMode);
+            if(isEditMode){
+                $("#btnUpdateProfile").removeClass("d-none");
+                 $("#btnProfileImage").removeClass("bg-secondary").addClass("bg-primary");
+                $(this).html('<i class="ti ti-check"></i>');
+            }
+            else{
+                $("#btnUpdateProfile").addClass("d-none");
+                 $("#btnProfileImage").removeClass("bg-primary").addClass("bg-secondary");
+                $(this).html('<i class="ti ti-pencil"></i>');
+            }
+            resetformMyProfile();
+
+        });
+        $(document).on("click","#btnProfileImage",function(){
+            if(isEditMode){
+                $("#fileProfileImage").click();
+            }
+        });
+        $(document).on("change","#fileProfileImage",function(){
+            let file=this.files[0];
+            if(!file){return};
+                 let allowedTypes = [
+                                    "image/jpeg",
+                                    "image/jpg",
+                                    "image/png",
+                                    "image/webp"
+                 ];
+                 if(!allowedTypes.includes(file.type)){
+                    ShowToast("warning","Invalid Type", "Only JPG, PNG and WEBP images are allowed !!");
+                    $(this).val('');
+                    return;
+                 }
+                 let maxSize = 2 * 1024 * 1024;
+                 if (file.size > maxSize) {
+                        ShowToast("warning","Size", "Image size should be less than 2MB");
+                        $(this).val('');
+                        return;
+                 }
+                 let reader=new FileReader();
+                reader.onload = function (e) {
+                    $("#imgProfile").attr("src", e.target.result);
+                }
+                reader.readAsDataURL(file);
+        });
+
+        $(document).on("click","#btnUpdateProfile",function(){
+            if (!validateContols()) {
+                return;
+            }
+            setButtonState(this, true, "Saving...");
+                    let formData = new FormData();
+                    formData.append("Id", $("#hdnencId").val().trim());
+                    formData.append("FullName", $("#txtMPName").val().trim());
+                    formData.append("Email", $("#txtMPEmail").val().trim());
+                    formData.append("Mobile", $("#txtMPMobile").val().trim());
+                    formData.append("Address", $("#txtMPAddress").val().trim());
+                    let profileImage = $("#fileProfileImage")[0].files[0];
+                    if (profileImage) {
+                        formData.append("ProfilePicture", profileImage);
+                    }
+
+                    $.ajax({
+                        url: "/Employee/UpdateMyProfile",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (res) {
+                            let type = res.status === 1 ? "success" : (res.status === 2 || res.status === 3) ? "warning" : res.status === -1 ? "info" : "error";
+                            let title = res.status === 1 ? "Success" : (res.status === 2 || res.status === 3) ? "Already Exists" : res.status === -1 ? "Not Found" : "Error";
+                            if (res.status === 1) {
+                                     setTimeout(function () {location.reload();}, 1000);
+                            }
+                            ShowToast(type, title, res.message);
+                        },
+                        complete: function () {
+                            setButtonState(this, false);
+                            isEditMode = false;
+                        }
+                    });
+        });
+
+        function validateContols() {
+            if (!validateRequired("txtMPName", [], "Name is required !")) return false;
+            if (!validateEmail("txtMPEmail", "Email is required!", "Enter a valid email address")) return false;
+            if (!validateContactNumber("txtMPMobile", "Contact number is required !", "Enter a valid contact number !")) return false;
+            if (!validateRequired("txtMPAddress", [], "Employee address is required !")) return false;
+            return true;
+        }
+         $(document).on(
+            "input change",
+            "#txtMPName,#txtMPEmail,#txtMPMobile,#txtMPAddress",
+            function () {
+                $(this).removeClass("input-error");
+                $(this).next(".error-text").remove();
+            }
+        );
+        function resetformMyProfile(){
+            $("#txtMPName,#txtMPEmail,#txtMPMobile,#txtMPAddress").removeClass("input-error");
+            $(".error-text").remove();
+        }
+    </script>
+}
