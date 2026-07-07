@@ -31,3 +31,7 @@ appsettings.Development.json
 # Temporary files
 Temp.txt
 *.ipynb
+
+# Log files
+PORTIMAGES.Web/Logs/
+*.log

@@ -200,8 +200,8 @@ h6 {
 }
 
 .login-form-container .logo {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     background-color: rgba(var(--primary-color), 1);
     display: flex;
@@ -209,6 +209,9 @@ h6 {
     justify-content: center;
     margin-bottom: -60px;
     position: relative;
+}
+.login-form-container .logo img{
+    height: 100px;
 }
 
 .btn-primary {
@@ -381,8 +384,9 @@ form {
     padding: 25px 20px;
 }
 
-.logo img {
-    height: 50px;
+
+.sidebar-area .logo img {
+    height: 70px;
 }
 
 .sidebar-area .logo .logo-text {
