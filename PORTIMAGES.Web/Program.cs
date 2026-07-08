@@ -53,17 +53,17 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/", context =>
-{
-    //context.Response.Redirect("/Login");
-    context.Response.Redirect("/StaffLogin");
-    return Task.CompletedTask;
-});
+//app.MapGet("/", context =>
+//{
+//    //context.Response.Redirect("/Login");
+//    context.Response.Redirect("/StaffLogin");
+//    return Task.CompletedTask;
+//});
 
 app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=AuthUser}/{action=Login}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
